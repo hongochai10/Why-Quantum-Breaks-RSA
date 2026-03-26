@@ -1,65 +1,76 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import ShorPanel from "@/components/ShorPanel";
+import PQCPanel from "@/components/PQCPanel";
+import QubitSlider from "@/components/QubitSlider";
 
 export default function Home() {
+  const [qubitCount, setQubitCount] = useState(2000);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="flex-1 flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="border-b border-[#1e1e30] bg-[#0d0d18]/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-[1600px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">
+                <span className="text-white">Why Quantum </span>
+                <span className="text-[#ff4d6a]">Breaks</span>
+                <span className="text-white"> RSA</span>
+              </h1>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Interactive comparison: Classical cryptography vs Post-Quantum security
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#ff4d6a]" />
+                <span className="text-xs text-gray-400">Vulnerable</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#00e88f]" />
+                <span className="text-xs text-gray-400">Quantum-Safe</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Qubit Slider */}
+      <div className="max-w-[1600px] mx-auto w-full px-6 py-4">
+        <QubitSlider value={qubitCount} onChange={setQubitCount} />
+      </div>
+
+      {/* Split Screen Panels */}
+      <div className="flex-1 max-w-[1600px] mx-auto w-full px-6 pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+          {/* Left Panel - Classical RSA */}
+          <div className="rounded-xl bg-[#12121e] border border-[#ff4d6a]/20 p-6 glow-red">
+            <ShorPanel />
+          </div>
+
+          {/* Right Panel - Post-Quantum */}
+          <div className="rounded-xl bg-[#12121e] border border-[#00e88f]/20 p-6 glow-green">
+            <PQCPanel qubitCount={qubitCount} />
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-[#1e1e30] py-4">
+        <div className="max-w-[1600px] mx-auto px-6">
+          <div className="flex items-center justify-between text-[10px] text-gray-600">
+            <span>
+              Educational simulation — qubit estimates are approximate based on current research
+            </span>
+            <span>
+              NIST PQC Standard: FIPS 203 (ML-KEM) · August 2024
+            </span>
+          </div>
+        </div>
+      </footer>
+    </main>
   );
 }

@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a12;
+  --foreground: #e8e8f0;
+  --accent-red: #ff4d6a;
+  --accent-blue: #4d9fff;
+  --accent-green: #00e88f;
+  --accent-purple: #a855f7;
+  --accent-yellow: #fbbf24;
+  --panel-bg: #12121e;
+  --panel-border: #1e1e30;
 }
 
 @theme inline {
@@ -12,15 +19,79 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--panel-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 3px;
+}
+
+/* Glow effects */
+.glow-red {
+  box-shadow: 0 0 20px rgba(255, 77, 106, 0.15), 0 0 60px rgba(255, 77, 106, 0.05);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 232, 143, 0.15), 0 0 60px rgba(0, 232, 143, 0.05);
+}
+.glow-blue {
+  box-shadow: 0 0 20px rgba(77, 159, 255, 0.15), 0 0 60px rgba(77, 159, 255, 0.05);
+}
+
+/* Quantum circuit animation */
+@keyframes pulse-line {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.animate-pulse-line {
+  animation: pulse-line 2s ease-in-out infinite;
+}
+
+@keyframes flow-right {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.animate-flow {
+  animation: flow-right 2s linear infinite;
+}
+
+/* Lattice grid animation */
+@keyframes lattice-shift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 2px); }
+}
+.animate-lattice {
+  animation: lattice-shift 4s ease-in-out infinite;
+}
+
+/* Slider custom styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
 }
