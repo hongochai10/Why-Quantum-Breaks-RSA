@@ -42,11 +42,11 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
 
   return (
     <div className="relative w-full h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4 overflow-hidden">
-      <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono">
+      <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
         LATTICE PROBLEM (SVP)
       </div>
 
-      <svg viewBox="0 0 500 140" className="w-full h-full">
+      <svg viewBox="0 0 500 140" className="w-full h-full" role="img" aria-label={`Lattice visualization showing the Shortest Vector Problem. A grid of ${gridSize}×${gridSize} points with the closest vector highlighted. ${searchAttempts.length} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.`}>
         {/* Grid lines */}
         {Array.from({ length: gridSize }).map((_, i) =>
           Array.from({ length: gridSize }).map((_, j) => {

@@ -13,17 +13,17 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
   const brokenCount = breakpoints.filter((b) => b.status === "broken").length;
 
   return (
-    <div className="rounded-xl bg-[#12121e] border border-[#1e1e30] p-6">
+    <section className="rounded-xl bg-[#12121e] border border-[#1e1e30] p-6" aria-labelledby="qubit-slider-heading">
       {/* Slider Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-bold text-white">Qubit Count</h3>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h2 id="qubit-slider-heading" className="text-sm font-bold text-white">Qubit Count</h2>
+          <p id="qubit-slider-desc" className="text-xs text-gray-500 mt-0.5">
             Drag to simulate quantum computer scaling
           </p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold font-mono text-[#a855f7]">
+          <div className="text-2xl font-bold font-mono text-[#a855f7]" aria-live="polite" aria-atomic="true">
             {value.toLocaleString()}
           </div>
           <div className="text-[10px] text-gray-500">logical qubits</div>
@@ -39,6 +39,12 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
           step={100}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
+          aria-label={`Qubit count: ${value.toLocaleString()}`}
+          aria-describedby="qubit-slider-desc"
+          aria-valuemin={100}
+          aria-valuemax={10000}
+          aria-valuenow={value}
+          aria-valuetext={`${value.toLocaleString()} logical qubits`}
           className="w-full cursor-pointer"
         />
         <div className="flex justify-between mt-1">
@@ -49,9 +55,9 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
 
       {/* RSA Breakpoints Timeline */}
       <div className="space-y-2">
-        <div className="text-xs text-gray-500 font-mono mb-2">
+        <h3 className="text-xs text-gray-500 font-mono mb-2">
           RSA KEY VULNERABILITY ({brokenCount}/{breakpoints.length} broken)
-        </div>
+        </h3>
 
         <div className="relative">
           {/* Progress bar background */}
@@ -90,6 +96,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                       className={`w-2 h-2 rounded-full ${
                         bp.status === "broken" ? "bg-[#ff4d6a]" : "bg-[#00e88f]"
                       }`}
+                      aria-hidden="true"
                       animate={
                         bp.status === "broken"
                           ? { scale: [1, 1.3, 1] }
@@ -109,7 +116,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-600 font-mono">
+                    <span className="text-[10px] text-gray-600 font-mono cursor-help" title={bp.citation}>
                       ~{bp.qubitsNeeded.toLocaleString()} qubits
                     </span>
                     <span
@@ -144,6 +151,6 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
           </p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

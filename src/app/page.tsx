@@ -10,6 +10,11 @@ export default function Home() {
 
   return (
     <main className="flex-1 flex flex-col min-h-screen">
+      {/* Skip to content link */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[#a855f7] focus:text-white focus:rounded focus:text-sm">
+        Skip to main content
+      </a>
+
       {/* Header */}
       <header className="border-b border-[#1e1e30] bg-[#0d0d18]/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-6 py-4">
@@ -24,36 +29,38 @@ export default function Home() {
                 Interactive comparison: Classical cryptography vs Post-Quantum security
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <nav aria-label="Security status legend" className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#ff4d6a]" />
+                <div className="w-2 h-2 rounded-full bg-[#ff4d6a]" aria-hidden="true" />
                 <span className="text-xs text-gray-400">Vulnerable</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#00e88f]" />
+                <div className="w-2 h-2 rounded-full bg-[#00e88f]" aria-hidden="true" />
                 <span className="text-xs text-gray-400">Quantum-Safe</span>
               </div>
-            </div>
+            </nav>
           </div>
         </div>
       </header>
 
-      {/* Qubit Slider */}
-      <div className="max-w-[1600px] mx-auto w-full px-6 py-4">
-        <QubitSlider value={qubitCount} onChange={setQubitCount} />
-      </div>
+      <div id="main-content">
+        {/* Qubit Slider */}
+        <div className="max-w-[1600px] mx-auto w-full px-6 py-4">
+          <QubitSlider value={qubitCount} onChange={setQubitCount} />
+        </div>
 
-      {/* Split Screen Panels */}
-      <div className="flex-1 max-w-[1600px] mx-auto w-full px-6 pb-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-          {/* Left Panel - Classical RSA */}
-          <div className="rounded-xl bg-[#12121e] border border-[#ff4d6a]/20 p-6 glow-red">
-            <ShorPanel />
-          </div>
+        {/* Split Screen Panels */}
+        <div className="flex-1 max-w-[1600px] mx-auto w-full px-6 pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+            {/* Left Panel - Classical RSA */}
+            <div className="rounded-xl bg-[#12121e] border border-[#ff4d6a]/20 p-6 glow-red">
+              <ShorPanel />
+            </div>
 
-          {/* Right Panel - Post-Quantum */}
-          <div className="rounded-xl bg-[#12121e] border border-[#00e88f]/20 p-6 glow-green">
-            <PQCPanel qubitCount={qubitCount} />
+            {/* Right Panel - Post-Quantum */}
+            <div className="rounded-xl bg-[#12121e] border border-[#00e88f]/20 p-6 glow-green">
+              <PQCPanel qubitCount={qubitCount} />
+            </div>
           </div>
         </div>
       </div>
@@ -61,7 +68,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-[#1e1e30] py-4">
         <div className="max-w-[1600px] mx-auto px-6">
-          <div className="flex items-center justify-between text-[10px] text-gray-600">
+          <div className="flex items-center justify-between text-[11px] text-gray-500">
             <span>
               Educational simulation — qubit estimates are approximate based on current research
             </span>

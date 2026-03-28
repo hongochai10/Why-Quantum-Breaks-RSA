@@ -19,11 +19,11 @@ export default function QuantumCircuit({ active, step }: QuantumCircuitProps) {
 
   return (
     <div className="relative w-full h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4 overflow-hidden">
-      <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono">
+      <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
         QUANTUM CIRCUIT
       </div>
 
-      <svg viewBox="0 0 500 140" className="w-full h-full">
+      <svg viewBox="0 0 500 140" className="w-full h-full" role="img" aria-label={`Quantum circuit diagram with ${qubits} qubit lines and ${gates.length} gates: Hadamard, Oracle, Inverse QFT, and Measure${active ? `. Currently executing step ${step + 1} of ${gates.length}` : ""}`}>
         {/* Qubit lines */}
         {Array.from({ length: qubits }).map((_, i) => (
           <g key={i}>
