@@ -13,17 +13,17 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
   const brokenCount = breakpoints.filter((b) => b.status === "broken").length;
 
   return (
-    <section className="rounded-xl bg-[#12121e] border border-[#1e1e30] p-6" aria-labelledby="qubit-slider-heading">
+    <section className="rounded-xl bg-[#12121e] border border-[#1e1e30] p-4 md:p-6" aria-labelledby="qubit-slider-heading">
       {/* Slider Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
+      <div className="flex items-center justify-between mb-3 md:mb-4 gap-4">
+        <div className="min-w-0">
           <h2 id="qubit-slider-heading" className="text-sm font-bold text-white">Qubit Count</h2>
-          <p id="qubit-slider-desc" className="text-xs text-gray-500 mt-0.5">
+          <p id="qubit-slider-desc" className="text-[10px] md:text-xs text-gray-500 mt-0.5">
             Drag to simulate quantum computer scaling
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold font-mono text-[#a855f7]" aria-live="polite" aria-atomic="true">
+        <div className="text-right shrink-0">
+          <div className="text-xl md:text-2xl font-bold font-mono text-[#a855f7]" aria-live="polite" aria-atomic="true">
             {value.toLocaleString()}
           </div>
           <div className="text-[10px] text-gray-500">logical qubits</div>
@@ -31,7 +31,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
       </div>
 
       {/* Slider */}
-      <div className="relative mb-6">
+      <div className="relative mb-4 md:mb-6">
         <input
           type="range"
           min={100}
@@ -90,10 +90,10 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="flex-1 flex items-center justify-between min-w-0 gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <motion.div
-                      className={`w-2 h-2 rounded-full ${
+                      className={`w-2 h-2 rounded-full shrink-0 ${
                         bp.status === "broken" ? "bg-[#ff4d6a]" : "bg-[#00e88f]"
                       }`}
                       aria-hidden="true"
@@ -105,7 +105,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                       transition={{ duration: 1, repeat: Infinity }}
                     />
                     <span
-                      className={`text-sm font-mono ${
+                      className={`text-xs md:text-sm font-mono truncate ${
                         bp.status === "broken"
                           ? "text-[#ff4d6a] line-through"
                           : "text-white"
@@ -115,12 +115,12 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-600 font-mono cursor-help" title={bp.citation}>
+                  <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <span className="text-[10px] text-gray-600 font-mono cursor-help hidden sm:inline" title={bp.citation}>
                       ~{bp.qubitsNeeded.toLocaleString()} qubits
                     </span>
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-mono ${
+                      className={`text-[10px] px-1.5 md:px-2 py-0.5 rounded font-mono ${
                         bp.status === "broken"
                           ? "bg-[#ff4d6a]/10 text-[#ff4d6a]"
                           : "bg-[#00e88f]/10 text-[#00e88f]"

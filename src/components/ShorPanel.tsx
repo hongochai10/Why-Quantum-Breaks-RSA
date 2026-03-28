@@ -102,8 +102,8 @@ export default function ShorPanel() {
       />
 
       {/* Input Section */}
-      <div className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4">
-        <label htmlFor="shor-number-input" className="text-xs text-gray-500 font-mono block mb-2">
+      <div className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4">
+        <label htmlFor="shor-number-input" className="text-[10px] md:text-xs text-gray-500 font-mono block mb-2">
           ENTER A NUMBER TO FACTOR (Shor&apos;s Simulation)
         </label>
         <div className="flex gap-2">
@@ -113,7 +113,7 @@ export default function ShorPanel() {
             value={inputN}
             onChange={(e) => handleInputChange(e.target.value)}
             aria-describedby="shor-input-range"
-            className="flex-1 bg-[#12121e] border border-[#2a2a40] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:border-[#ff4d6a] transition-colors"
+            className="flex-1 min-w-0 bg-[#12121e] border border-[#2a2a40] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:border-[#ff4d6a] transition-colors"
             min={2}
             max={999}
             disabled={isRunning}
@@ -122,7 +122,7 @@ export default function ShorPanel() {
             onClick={handleRun}
             disabled={isButtonDisabled}
             aria-label={isRunning ? "Factoring in progress" : cooldown ? "Please wait before trying again" : `Factor the number ${inputN}`}
-            className="px-4 py-2 rounded bg-[#ff4d6a] hover:bg-[#ff3355] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:ring-offset-2 focus:ring-offset-[#0d0d18]"
+            className="px-3 md:px-4 py-2 rounded bg-[#ff4d6a] hover:bg-[#ff3355] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:ring-offset-2 focus:ring-offset-[#0d0d18]"
           >
             {isRunning ? "Running..." : cooldown ? "Wait..." : "Factor"}
           </button>
@@ -155,7 +155,7 @@ export default function ShorPanel() {
       </div>
 
       {/* Step-by-step Results */}
-      <div className="flex-1 overflow-y-auto rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" role="log" aria-label="Algorithm steps" aria-live="polite">
+      <div className="flex-1 overflow-y-auto rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4" role="log" aria-label="Algorithm steps" aria-live="polite">
         <h3 className="text-xs text-gray-500 font-mono mb-3">ALGORITHM STEPS</h3>
 
         <AnimatePresence mode="popLayout">
@@ -181,12 +181,12 @@ export default function ShorPanel() {
                 >
                   {i + 1}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-[#a855f7]">{step.label}</span>
-                    <span className="text-sm text-white">{step.description}</span>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-1 md:gap-2">
+                    <span className="text-[10px] md:text-xs font-mono text-[#a855f7]">{step.label}</span>
+                    <span className="text-xs md:text-sm text-white">{step.description}</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
                 </div>
               </article>
             </motion.div>
