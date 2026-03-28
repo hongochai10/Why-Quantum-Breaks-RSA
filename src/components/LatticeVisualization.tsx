@@ -2,13 +2,14 @@
 
 import { motion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
-import { LATTICE_GRID_SIZE } from "@/lib/constants";
+import { ANIMATION, LATTICE_GRID_SIZE } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
   qubitCount: number;
+  animationSpeedMs?: number;
 }
 
-export default function LatticeVisualization({ qubitCount }: LatticeVisualizationProps) {
+export default function LatticeVisualization({ qubitCount, animationSpeedMs = ANIMATION.speeds[ANIMATION.defaultSpeedIndex].value }: LatticeVisualizationProps) {
   const gridSize = LATTICE_GRID_SIZE;
 
   const points = useMemo(() => {
@@ -53,10 +54,10 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
       if (current >= searchAttempts.length) {
         clearInterval(interval);
       }
-    }, 500);
+    }, animationSpeedMs);
 
     return () => clearInterval(interval);
-  }, [searchAttempts]);
+  }, [searchAttempts, animationSpeedMs]);
 
   // Memoize static grid lines
   const gridLines = useMemo(() => {

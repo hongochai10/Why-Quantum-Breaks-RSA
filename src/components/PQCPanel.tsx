@@ -6,14 +6,23 @@ import LatticeVisualization from "./LatticeVisualization";
 
 interface PQCPanelProps {
   qubitCount: number;
+  animationSpeedMs?: number;
 }
 
-export default function PQCPanel({ qubitCount }: PQCPanelProps) {
+export default function PQCPanel({ qubitCount, animationSpeedMs }: PQCPanelProps) {
   const pqcAlgorithms = getPQCStatus();
 
   // Grover speedup: only sqrt improvement
   const classicalOps = BigInt(2) ** BigInt(128);
   const quantumOps = BigInt(2) ** BigInt(64);
+
+  const formatBigInt = (n: bigint) => {
+    const str = n.toString();
+    const exp = str.length - 1;
+    return { mantissa: `${str[0]}.${str.slice(1, 3)}`, exp };
+  };
+  const classicalFmt = formatBigInt(classicalOps);
+  const quantumFmt = formatBigInt(quantumOps);
 
   return (
     <section aria-labelledby="pqc-panel-heading" className="flex flex-col gap-4 h-full">
@@ -40,7 +49,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
       </p>
 
       {/* Lattice Visualization */}
-      <LatticeVisualization qubitCount={qubitCount} />
+      <LatticeVisualization qubitCount={qubitCount} animationSpeedMs={animationSpeedMs} />
 
       {/* Why Lattice is Hard */}
       <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" aria-labelledby="lattice-hard-heading">
@@ -101,7 +110,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
           <div className="flex justify-between items-center">
             <span className="text-xs text-gray-400">Classical brute force</span>
             <span className="text-xs font-mono text-white">
-              2<sup>128</sup> ≈ {classicalOps.toString().slice(0, 4)}×10<sup>38</sup>
+              2<sup>128</sup> ≈ {classicalFmt.mantissa}×10<sup>{classicalFmt.exp}</sup>
             </span>
           </div>
           <div className="w-full h-2 bg-[#1a1a2e] rounded-full overflow-hidden" role="img" aria-label="Classical brute force: full bar representing 2 to the power of 128 operations">
@@ -111,7 +120,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
           <div className="flex justify-between items-center mt-2">
             <span className="text-xs text-gray-400">Grover&apos;s quantum search</span>
             <span className="text-xs font-mono text-white">
-              2<sup>64</sup> ≈ {quantumOps.toString().slice(0, 4)}×10<sup>19</sup>
+              2<sup>64</sup> ≈ {quantumFmt.mantissa}×10<sup>{quantumFmt.exp}</sup>
             </span>
           </div>
           <div className="w-full h-2 bg-[#1a1a2e] rounded-full overflow-hidden" role="img" aria-label="Grover quantum search: half bar representing 2 to the power of 64 operations">

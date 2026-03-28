@@ -3,8 +3,13 @@
 import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
-import { COLORS, ANIMATION, SHOR_PRESETS } from "@/lib/constants";
+import { ANIMATION, SHOR_PRESETS } from "@/lib/constants";
 import QuantumCircuit from "./QuantumCircuit";
+
+interface ShorPanelProps {
+  speedIndex: number;
+  onSpeedChange: (index: number) => void;
+}
 
 function validateInput(value: string): string | null {
   if (value.trim() === "") return "Please enter a number.";
@@ -15,7 +20,7 @@ function validateInput(value: string): string | null {
   return null;
 }
 
-export default function ShorPanel() {
+export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps) {
   const [inputN, setInputN] = useState("15");
   const [result, setResult] = useState<ShorResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -23,7 +28,6 @@ export default function ShorPanel() {
   const [currentStep, setCurrentStep] = useState(-1);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(false);
-  const [speedIndex, setSpeedIndex] = useState<number>(ANIMATION.defaultSpeedIndex);
   const cooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseRef = useRef(false);
   const abortRef = useRef(false);
@@ -199,7 +203,7 @@ export default function ShorPanel() {
             {ANIMATION.speeds.map((speed, idx) => (
               <button
                 key={speed.label}
-                onClick={() => setSpeedIndex(idx)}
+                onClick={() => onSpeedChange(idx)}
                 aria-label={`Set speed to ${speed.label}`}
                 aria-pressed={idx === speedIndex}
                 className={`px-1.5 py-0.5 text-[10px] rounded font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-[#a855f7] ${

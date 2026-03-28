@@ -5,9 +5,11 @@ import ShorPanel from "@/components/ShorPanel";
 import PQCPanel from "@/components/PQCPanel";
 import QubitSlider from "@/components/QubitSlider";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { ANIMATION } from "@/lib/constants";
 
 export default function Home() {
   const [qubitCount, setQubitCount] = useState(2000);
+  const [speedIndex, setSpeedIndex] = useState<number>(ANIMATION.defaultSpeedIndex);
 
   return (
     <main className="flex-1 flex flex-col min-h-screen">
@@ -56,14 +58,14 @@ export default function Home() {
             {/* Left Panel - Classical RSA */}
             <div className="rounded-xl bg-[#12121e] border border-[#ff4d6a]/20 p-4 md:p-6 glow-red">
               <ErrorBoundary>
-                <ShorPanel />
+                <ShorPanel speedIndex={speedIndex} onSpeedChange={setSpeedIndex} />
               </ErrorBoundary>
             </div>
 
             {/* Right Panel - Post-Quantum */}
             <div className="rounded-xl bg-[#12121e] border border-[#00e88f]/20 p-4 md:p-6 glow-green">
               <ErrorBoundary>
-                <PQCPanel qubitCount={qubitCount} />
+                <PQCPanel qubitCount={qubitCount} animationSpeedMs={ANIMATION.speeds[speedIndex].value} />
               </ErrorBoundary>
             </div>
           </div>
