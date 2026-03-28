@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Why Quantum Breaks RSA
+
+An interactive educational dashboard that visualizes how quantum computing threatens classical RSA encryption and why post-quantum cryptography (PQC) is the path forward.
+
+**Live demo**: side-by-side comparison of Shor's algorithm factoring RSA keys vs. lattice-based ML-KEM resisting quantum attacks.
+
+## Features
+
+- **Shor's Algorithm Simulation** — Step-by-step animated walkthrough of quantum integer factorization. Pick a semiprime (15, 21, 35, 77, 91, 143), watch the quantum circuit execute Hadamard gates, oracle queries, inverse QFT, and measurement stages.
+- **Qubit Slider** — Drag to scale a hypothetical quantum computer from 0 to 10,000 logical qubits. See which RSA key sizes (1024, 2048, 4096) break at each threshold.
+- **Post-Quantum Cryptography Panel** — Explains ML-KEM (FIPS 203, formerly CRYSTALS-Kyber) and shows why lattice problems remain hard even for quantum computers.
+- **Lattice Visualization** — Animated 2D lattice grid demonstrating the search space that quantum computers cannot efficiently collapse.
+- **Quantum Circuit Diagram** — SVG rendering of a 4-qubit circuit with gate-by-gate animation and screen-reader accessible labels.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | [Next.js 16](https://nextjs.org/) |
+| UI | [React 19](https://react.dev/) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com/) |
+| Animation | [Framer Motion 12](https://motion.dev/) |
+| Language | TypeScript 5 |
+| Fonts | Geist Sans & Geist Mono |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ (recommended: 20+)
+- npm, yarn, pnpm, or bun
+
+### Install & Run
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/why-quantum-breaks-rsa.git
+cd why-quantum-breaks-rsa
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+### Lint
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout with metadata and fonts
+│   ├── page.tsx            # Main dashboard page
+│   └── globals.css         # Global styles
+├── components/
+│   ├── ShorPanel.tsx       # Shor's algorithm simulation UI
+│   ├── PQCPanel.tsx        # Post-quantum cryptography panel
+│   ├── QubitSlider.tsx     # Qubit count slider with RSA breakpoints
+│   ├── QuantumCircuit.tsx  # SVG quantum circuit diagram
+│   ├── LatticeVisualization.tsx  # Animated lattice grid
+│   └── ErrorBoundary.tsx   # React error boundary
+└── lib/
+    ├── shor.ts             # Shor's algorithm implementation
+    └── constants.ts        # Design tokens, presets, gate definitions
+```
 
-## Deploy on Vercel
+## How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The dashboard presents a split-screen comparison:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Left panel (red)** — Classical RSA is vulnerable. The Shor simulation demonstrates how a quantum computer finds the period of modular exponentiation, then uses that period to extract prime factors. The implementation walks through each algorithmic step: pick a random base, check GCD, find the period via simulated quantum Fourier transform, and compute factors.
+
+**Right panel (green)** — Post-quantum cryptography is safe. ML-KEM (Module Lattice-based Key Encapsulation) relies on the hardness of structured lattice problems (Module Learning With Errors), which no known quantum algorithm can solve efficiently. The panel shows security margins and the lattice visualization illustrates the intractable search space.
+
+**Qubit slider** — Connects both panels. As you increase logical qubits, RSA keys fall one by one (1024-bit at ~2,000 qubits, 2048-bit at ~4,000, 4096-bit at ~8,000), while lattice-based schemes remain unaffected.
+
+## Accessibility
+
+- WCAG AA compliant with proper color contrast
+- Full keyboard navigation with visible focus indicators
+- ARIA labels on interactive elements and data visualizations
+- Skip-to-content link
+- `prefers-reduced-motion` support for animations
+- Semantic HTML structure
+
+## Academic References
+
+The qubit estimates and cryptographic claims are based on published research:
+
+- Gidney, C. & Ekera, M. (2021). *How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits.* Quantum, 5, 433.
+- NIST. (2024). *FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM).*
+- Shor, P. (1994). *Algorithms for quantum computation: discrete logarithms and factoring.* Proceedings 35th Annual Symposium on Foundations of Computer Science.
+
+## License
+
+This project is for educational purposes. No license file has been added yet — contact the repository owner for usage terms.
