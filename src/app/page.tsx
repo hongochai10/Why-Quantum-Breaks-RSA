@@ -26,7 +26,7 @@ export default function Home() {
                 <span className="text-[#ff4d6a]">Breaks</span>
                 <span className="text-white"> RSA</span>
               </h1>
-              <p className="text-[10px] md:text-xs text-gray-500 mt-0.5">
+              <p className="text-xs md:text-sm text-gray-500 mt-0.5">
                 Interactive comparison: Classical cryptography vs Post-Quantum security
               </p>
             </div>

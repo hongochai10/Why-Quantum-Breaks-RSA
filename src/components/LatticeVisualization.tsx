@@ -1,20 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { LATTICE_GRID_SIZE } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
   qubitCount: number;
 }
 
 export default function LatticeVisualization({ qubitCount }: LatticeVisualizationProps) {
-  const gridSize = 8;
+  const gridSize = LATTICE_GRID_SIZE;
 
   const points = useMemo(() => {
     const pts: { x: number; y: number; isTarget: boolean }[] = [];
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
-        // Skew the grid to look like a lattice
         const baseX = 40 + i * 50 + j * 15;
         const baseY = 20 + j * 45 - i * 5;
         pts.push({
@@ -25,9 +25,8 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
       }
     }
     return pts;
-  }, []);
+  }, [gridSize]);
 
-  // The quantum "search" tries random points but never finds the closest vector
   const searchAttempts = useMemo(() => {
     const attempts: { x: number; y: number }[] = [];
     const seed = qubitCount;
@@ -40,45 +39,62 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
     return attempts;
   }, [qubitCount, points]);
 
+  // Animate search attempts one at a time
+  const [visibleAttempts, setVisibleAttempts] = useState(0);
+
+  useEffect(() => {
+    setVisibleAttempts(0);
+    if (searchAttempts.length === 0) return;
+
+    let current = 0;
+    const interval = setInterval(() => {
+      current++;
+      setVisibleAttempts(current);
+      if (current >= searchAttempts.length) {
+        clearInterval(interval);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [searchAttempts]);
+
+  // Memoize static grid lines
+  const gridLines = useMemo(() => {
+    const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        const idx = i * gridSize + j;
+        const pt = points[idx];
+        if (j < gridSize - 1) {
+          lines.push({ x1: pt.x, y1: pt.y, x2: points[idx + 1].x, y2: points[idx + 1].y });
+        }
+        if (i < gridSize - 1) {
+          lines.push({ x1: pt.x, y1: pt.y, x2: points[idx + gridSize].x, y2: points[idx + gridSize].y });
+        }
+      }
+    }
+    return lines;
+  }, [gridSize, points]);
+
   return (
-    <div className="relative w-full h-36 md:h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-2 md:p-4 overflow-hidden">
+    <div className="relative w-full h-36 md:h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4 overflow-hidden">
       <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
         LATTICE PROBLEM (SVP)
       </div>
 
       <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-label={`Lattice visualization showing the Shortest Vector Problem. A grid of ${gridSize}×${gridSize} points with the closest vector highlighted. ${searchAttempts.length} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.`}>
         {/* Grid lines */}
-        {Array.from({ length: gridSize }).map((_, i) =>
-          Array.from({ length: gridSize }).map((_, j) => {
-            const idx = i * gridSize + j;
-            const pt = points[idx];
-            // Connect to neighbors
-            return (
-              <g key={`${i}-${j}`}>
-                {j < gridSize - 1 && (
-                  <line
-                    x1={pt.x}
-                    y1={pt.y}
-                    x2={points[idx + 1].x}
-                    y2={points[idx + 1].y}
-                    stroke="#1a1a30"
-                    strokeWidth="0.5"
-                  />
-                )}
-                {i < gridSize - 1 && (
-                  <line
-                    x1={pt.x}
-                    y1={pt.y}
-                    x2={points[idx + gridSize].x}
-                    y2={points[idx + gridSize].y}
-                    stroke="#1a1a30"
-                    strokeWidth="0.5"
-                  />
-                )}
-              </g>
-            );
-          })
-        )}
+        {gridLines.map((line, idx) => (
+          <line
+            key={idx}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke="#1a1a30"
+            strokeWidth="0.5"
+          />
+        ))}
 
         {/* Lattice points */}
         {points.map((pt, idx) => (
@@ -116,8 +132,8 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
             </text>
           ))}
 
-        {/* Quantum search attempts (all miss) */}
-        {searchAttempts.map((pt, idx) => (
+        {/* Quantum search attempts — revealed sequentially */}
+        {searchAttempts.slice(0, visibleAttempts).map((pt, idx) => (
           <g key={`search-${idx}`}>
             <motion.circle
               cx={pt.x}
@@ -129,7 +145,7 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
               strokeDasharray="3 2"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: [0, 0.8, 0.3], scale: [0, 1.2, 1] }}
-              transition={{ delay: idx * 0.3, duration: 0.8 }}
+              transition={{ duration: 0.8 }}
             />
             <motion.text
               x={pt.x}
@@ -140,7 +156,7 @@ export default function LatticeVisualization({ qubitCount }: LatticeVisualizatio
               fontFamily="monospace"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0.5] }}
-              transition={{ delay: idx * 0.3 + 0.2, duration: 0.6 }}
+              transition={{ duration: 0.6 }}
             >
               ✗
             </motion.text>

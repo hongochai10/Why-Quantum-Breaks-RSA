@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
+import { COLORS, ANIMATION, SHOR_PRESETS } from "@/lib/constants";
 import QuantumCircuit from "./QuantumCircuit";
 
 function validateInput(value: string): string | null {
@@ -14,41 +15,52 @@ function validateInput(value: string): string | null {
   return null;
 }
 
-const COOLDOWN_MS = 1500;
-
 export default function ShorPanel() {
   const [inputN, setInputN] = useState("15");
   const [result, setResult] = useState<ShorResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(false);
+  const [speedIndex, setSpeedIndex] = useState<number>(ANIMATION.defaultSpeedIndex);
   const cooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const presets = [15, 21, 35, 77, 91, 143];
+  const pauseRef = useRef(false);
+  const abortRef = useRef(false);
 
   const simulate = useCallback(async (n: number) => {
     setIsRunning(true);
     setResult(null);
     setError(null);
     setCurrentStep(-1);
+    setIsPaused(false);
+    pauseRef.current = false;
+    abortRef.current = false;
 
     const shorResult = runShor(n);
 
-    // Animate through steps
     for (let i = 0; i < shorResult.steps.length; i++) {
+      if (abortRef.current) break;
+      // Wait while paused
+      while (pauseRef.current && !abortRef.current) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      if (abortRef.current) break;
+
       setCurrentStep(i);
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, ANIMATION.speeds[speedIndex].value));
     }
 
-    setResult(shorResult);
+    if (!abortRef.current) {
+      setResult(shorResult);
+    }
     setIsRunning(false);
+    setIsPaused(false);
 
-    // Cooldown to prevent spam
     setCooldown(true);
     if (cooldownRef.current) clearTimeout(cooldownRef.current);
-    cooldownRef.current = setTimeout(() => setCooldown(false), COOLDOWN_MS);
-  }, []);
+    cooldownRef.current = setTimeout(() => setCooldown(false), ANIMATION.cooldownMs);
+  }, [speedIndex]);
 
   const handleInputChange = (value: string) => {
     setInputN(value);
@@ -66,6 +78,16 @@ export default function ShorPanel() {
     simulate(Number(inputN));
   };
 
+  const handlePauseResume = () => {
+    pauseRef.current = !pauseRef.current;
+    setIsPaused(pauseRef.current);
+  };
+
+  const handleStop = () => {
+    abortRef.current = true;
+    pauseRef.current = false;
+  };
+
   const isButtonDisabled = isRunning || cooldown || validateInput(inputN) !== null;
 
   return (
@@ -79,7 +101,7 @@ export default function ShorPanel() {
         </span>
       </div>
 
-      <p className="text-xs text-gray-400 leading-relaxed">
+      <p className="text-sm text-gray-400 leading-relaxed">
         Shor&apos;s algorithm uses{" "}
         <span className="text-[#a855f7] cursor-help border-b border-dotted border-[#a855f7]/40" title="Quantum Fourier Transform (QFT): The quantum analogue of the discrete Fourier transform. It maps quantum states to their frequency components in O(n²) gates, enabling efficient period-finding — the core of Shor's algorithm. Classically, the best known factoring algorithm (GNFS) runs in sub-exponential time.">
           quantum period-finding
@@ -102,7 +124,7 @@ export default function ShorPanel() {
       />
 
       {/* Input Section */}
-      <div className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4">
+      <div className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4">
         <label htmlFor="shor-number-input" className="text-[10px] md:text-xs text-gray-500 font-mono block mb-2">
           ENTER A NUMBER TO FACTOR (Shor&apos;s Simulation)
         </label>
@@ -121,10 +143,10 @@ export default function ShorPanel() {
           <button
             onClick={handleRun}
             disabled={isButtonDisabled}
-            aria-label={isRunning ? "Factoring in progress" : cooldown ? "Please wait before trying again" : `Factor the number ${inputN}`}
+            aria-label={isRunning ? "Factoring in progress" : cooldown ? "Please wait before trying again" : `Run Shor's Algorithm on ${inputN}`}
             className="px-3 md:px-4 py-2 rounded bg-[#ff4d6a] hover:bg-[#ff3355] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:ring-offset-2 focus:ring-offset-[#0d0d18]"
           >
-            {isRunning ? "Running..." : cooldown ? "Wait..." : "Factor"}
+            {isRunning ? "Running..." : cooldown ? "Wait..." : "Run Shor's Algorithm"}
           </button>
         </div>
         <p id="shor-input-range" className="sr-only">Enter a number between 2 and 999</p>
@@ -137,25 +159,64 @@ export default function ShorPanel() {
         )}
 
         {/* Presets */}
-        <div className="flex gap-2 mt-3 flex-wrap" role="group" aria-label="Preset numbers to factor">
-          {presets.map((p) => (
+        <div className="flex gap-2 mt-3 flex-wrap" role="group" aria-label="Preset composite numbers to factor">
+          {SHOR_PRESETS.map((preset) => (
             <button
-              key={p}
+              key={preset.n}
               onClick={() => {
-                setInputN(String(p));
-                if (!isRunning) simulate(p);
+                setInputN(String(preset.n));
+                if (!isRunning) simulate(preset.n);
               }}
-              aria-label={`Factor ${p}`}
+              title={`Composite number: ${preset.factors}`}
+              aria-label={`Factor ${preset.n} (${preset.factors})`}
               className="px-2 py-1 text-xs font-mono rounded bg-[#1a1a2e] hover:bg-[#2a2a40] text-gray-400 hover:text-white transition-colors border border-[#2a2a40] focus:outline-none focus:ring-2 focus:ring-[#a855f7] focus:ring-offset-1 focus:ring-offset-[#0d0d18]"
             >
-              {p}
+              {preset.n}
             </button>
           ))}
         </div>
       </div>
 
+      {/* Animation Controls */}
+      {isRunning && (
+        <div className="flex items-center gap-3 px-1">
+          <button
+            onClick={handlePauseResume}
+            aria-label={isPaused ? "Resume simulation" : "Pause simulation"}
+            className="px-3 py-1.5 text-xs rounded bg-[#1a1a2e] hover:bg-[#2a2a40] text-gray-300 border border-[#2a2a40] transition-colors focus:outline-none focus:ring-2 focus:ring-[#a855f7] focus:ring-offset-1 focus:ring-offset-[#0d0d18]"
+          >
+            {isPaused ? "Resume" : "Pause"}
+          </button>
+          <button
+            onClick={handleStop}
+            aria-label="Stop simulation"
+            className="px-3 py-1.5 text-xs rounded bg-[#ff4d6a]/10 hover:bg-[#ff4d6a]/20 text-[#ff4d6a] border border-[#ff4d6a]/20 transition-colors focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:ring-offset-1 focus:ring-offset-[#0d0d18]"
+          >
+            Stop
+          </button>
+          <div className="ml-auto flex items-center gap-1.5" role="group" aria-label="Animation speed">
+            <span className="text-[10px] text-gray-500">Speed:</span>
+            {ANIMATION.speeds.map((speed, idx) => (
+              <button
+                key={speed.label}
+                onClick={() => setSpeedIndex(idx)}
+                aria-label={`Set speed to ${speed.label}`}
+                aria-pressed={idx === speedIndex}
+                className={`px-1.5 py-0.5 text-[10px] rounded font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-[#a855f7] ${
+                  idx === speedIndex
+                    ? "bg-[#a855f7]/20 text-[#a855f7] border border-[#a855f7]/30"
+                    : "text-gray-500 hover:text-gray-300 border border-transparent"
+                }`}
+              >
+                {speed.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Step-by-step Results */}
-      <div className="flex-1 overflow-y-auto rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4" role="log" aria-label="Algorithm steps" aria-live="polite">
+      <div className="flex-1 overflow-y-auto rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" role="log" aria-label="Algorithm steps" aria-live="polite">
         <h3 className="text-xs text-gray-500 font-mono mb-3">ALGORITHM STEPS</h3>
 
         <AnimatePresence mode="popLayout">
@@ -184,9 +245,9 @@ export default function ShorPanel() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-1 md:gap-2">
                     <span className="text-[10px] md:text-xs font-mono text-[#a855f7]">{step.label}</span>
-                    <span className="text-xs md:text-sm text-white">{step.description}</span>
+                    <span className="text-sm text-white">{step.description}</span>
                   </div>
-                  <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
                 </div>
               </article>
             </motion.div>
@@ -201,7 +262,7 @@ export default function ShorPanel() {
 
         {isRunning && (
           <div className="text-center text-[#ff4d6a] text-sm py-8 animate-pulse" role="status">
-            Quantum computer factoring...
+            {isPaused ? "Paused..." : "Quantum computer factoring..."}
           </div>
         )}
       </div>
@@ -213,7 +274,7 @@ export default function ShorPanel() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-lg bg-[#ff4d6a]/10 border border-[#ff4d6a]/30 p-3 glow-red"
+            className="rounded-lg bg-[#ff4d6a]/10 border border-[#ff4d6a]/30 p-4 glow-red"
             role="alert"
           >
             <div className="text-center">
@@ -234,7 +295,7 @@ export default function ShorPanel() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-lg bg-yellow-500/10 border border-yellow-500/30 p-3"
+            className="rounded-lg bg-yellow-500/10 border border-yellow-500/30 p-4"
             role="alert"
           >
             <div className="text-center">

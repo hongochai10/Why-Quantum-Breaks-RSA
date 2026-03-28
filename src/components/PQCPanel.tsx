@@ -26,7 +26,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
         </span>
       </div>
 
-      <p className="text-xs text-gray-400 leading-relaxed">
+      <p className="text-sm text-gray-400 leading-relaxed">
         ML-KEM (formerly CRYSTALS-Kyber), standardized in{" "}
         <span className="text-[#4d9fff] cursor-help border-b border-dotted border-[#4d9fff]/40" title="NIST FIPS 203 (2024) — Module-Lattice-Based Key-Encapsulation Mechanism Standard. Defines ML-KEM-512, ML-KEM-768, and ML-KEM-1024 at security levels 1, 3, and 5 respectively.">
           NIST FIPS 203
@@ -43,7 +43,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
       <LatticeVisualization qubitCount={qubitCount} />
 
       {/* Why Lattice is Hard */}
-      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4" aria-labelledby="lattice-hard-heading">
+      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" aria-labelledby="lattice-hard-heading">
         <h3 id="lattice-hard-heading" className="text-[10px] md:text-xs text-gray-500 font-mono mb-3">WHY QUANTUM CAN&apos;T BREAK LATTICE</h3>
 
         <div className="space-y-3">
@@ -92,7 +92,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
       </section>
 
       {/* Grover comparison */}
-      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4" aria-labelledby="grover-comparison-heading">
+      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" aria-labelledby="grover-comparison-heading">
         <h3 id="grover-comparison-heading" className="text-[10px] md:text-xs text-gray-500 font-mono mb-3">
           GROVER&apos;S SPEEDUP COMPARISON
         </h3>
@@ -124,7 +124,7 @@ export default function PQCPanel({ qubitCount }: PQCPanelProps) {
       </section>
 
       {/* PQC Algorithm Status */}
-      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-3 md:p-4" aria-labelledby="mlkem-levels-heading">
+      <section className="rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4" aria-labelledby="mlkem-levels-heading">
         <h3 id="mlkem-levels-heading" className="text-[10px] md:text-xs text-gray-500 font-mono mb-3">ML-KEM SECURITY LEVELS</h3>
         <ul className="space-y-2" role="list">
           {pqcAlgorithms.map((algo) => (

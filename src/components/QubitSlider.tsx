@@ -18,7 +18,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
       <div className="flex items-center justify-between mb-3 md:mb-4 gap-4">
         <div className="min-w-0">
           <h2 id="qubit-slider-heading" className="text-sm font-bold text-white">Qubit Count</h2>
-          <p id="qubit-slider-desc" className="text-[10px] md:text-xs text-gray-500 mt-0.5">
+          <p id="qubit-slider-desc" className="text-xs md:text-sm text-gray-500 mt-0.5">
             Drag to simulate quantum computer scaling
           </p>
         </div>
