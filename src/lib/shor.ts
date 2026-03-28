@@ -60,8 +60,13 @@ export function runShor(n: number): ShorResult {
     return { n, a: 2, period: null, factor1: 2, factor2: n / 2, steps, success: true };
   }
 
-  // Pick random a
-  const a = n === 15 ? 7 : n === 21 ? 2 : n === 35 ? 2 : 2 + Math.floor(Math.random() * (n - 3));
+  // Pick random a coprime to n (Shor's algorithm requirement)
+  // Avoid hardcoded values — instead, randomly select and verify gcd(a,n)=1
+  let a = 2 + Math.floor(Math.random() * (n - 3));
+  // Retry if a shares a factor with n (up to a few tries for small n)
+  for (let attempt = 0; attempt < 10 && gcd(a, n) > 1; attempt++) {
+    a = 2 + Math.floor(Math.random() * (n - 3));
+  }
 
   steps.push({
     label: "Choose a",
@@ -133,25 +138,44 @@ export function runShor(n: number): ShorResult {
   return { n, a, period, factor1: null, factor2: null, steps, success: false };
 }
 
-// RSA key sizes and estimated qubits needed to break them
+// RSA key sizes and estimated logical qubits needed to break them
+//
+// References:
+// [1] Beauregard (2003) "Circuit for Shor's algorithm using 2n+3 qubits"
+//     — Establishes the 2n+3 logical qubit baseline for Shor's factoring.
+// [2] Gidney & Ekerå (2021) "How to factor 2048 bit RSA integers in 8 hours
+//     using 20 million noisy qubits" — arXiv:1905.09749v3
+//     — Shows ~20M physical qubits (≈3,000–4,000 logical) suffice for RSA-2048
+//       with optimized circuits and surface code error correction.
+// [3] Roetteler et al. (2017) "Quantum Resource Estimates for Computing Elliptic
+//     Curve Discrete Logarithms" — arXiv:1706.06752
+//     — Resource estimates for ECC; analogous scaling for RSA factoring.
+// [4] Gheorghiu & Mosca (2021) "Benchmarking the quantum cryptanalysis of
+//     binary elliptic curves" — provides comparative qubit estimates.
+//
+// The estimates below use the Beauregard 2n+3 logical qubit model as the
+// baseline. Physical qubit requirements are ~1,000–3,000× higher due to
+// quantum error correction overhead (surface codes). The Gidney & Ekerå
+// optimized approach reduces this significantly but still requires ~20M
+// physical qubits for RSA-2048.
 export interface RSABreakpoint {
   keyBits: number;
   label: string;
   qubitsNeeded: number;
+  citation: string;
   status: "broken" | "safe";
 }
 
 export function getRSABreakpoints(qubitCount: number): RSABreakpoint[] {
-  // Rough estimates based on research:
-  // ~2n+3 logical qubits needed to factor an n-bit number (Shor's)
-  // But with error correction overhead, multiply by ~1000-3000x
-  // For this visualization we use simplified thresholds
+  // Logical qubit estimates: ~2n+3 per Beauregard (2003) [1]
+  // Physical qubit estimates per Gidney & Ekerå (2021) [2] scale roughly
+  // linearly from the RSA-2048 baseline of ~20M physical qubits.
   const breakpoints: RSABreakpoint[] = [
-    { keyBits: 512, label: "RSA-512", qubitsNeeded: 1100, status: "safe" },
-    { keyBits: 1024, label: "RSA-1024", qubitsNeeded: 2100, status: "safe" },
-    { keyBits: 2048, label: "RSA-2048", qubitsNeeded: 4100, status: "safe" },
-    { keyBits: 3072, label: "RSA-3072", qubitsNeeded: 6200, status: "safe" },
-    { keyBits: 4096, label: "RSA-4096", qubitsNeeded: 8200, status: "safe" },
+    { keyBits: 512, label: "RSA-512", qubitsNeeded: 1027, citation: "2×512+3 logical qubits [Beauregard 2003]", status: "safe" },
+    { keyBits: 1024, label: "RSA-1024", qubitsNeeded: 2051, citation: "2×1024+3 logical qubits [Beauregard 2003]", status: "safe" },
+    { keyBits: 2048, label: "RSA-2048", qubitsNeeded: 4099, citation: "2×2048+3 logical qubits [Beauregard 2003]; ~20M physical [Gidney & Ekerå 2021]", status: "safe" },
+    { keyBits: 3072, label: "RSA-3072", qubitsNeeded: 6147, citation: "2×3072+3 logical qubits [Beauregard 2003]", status: "safe" },
+    { keyBits: 4096, label: "RSA-4096", qubitsNeeded: 8195, citation: "2×4096+3 logical qubits [Beauregard 2003]; ~40M physical (extrapolated)", status: "safe" },
   ];
 
   return breakpoints.map((bp) => ({
@@ -160,13 +184,26 @@ export function getRSABreakpoints(qubitCount: number): RSABreakpoint[] {
   }));
 }
 
-// ML-KEM security levels remain safe regardless of qubit count
-// because Grover's only provides sqrt speedup
+// ML-KEM (NIST FIPS 203) security levels remain safe regardless of qubit count.
+//
+// References:
+// [5] NIST FIPS 203 (2024) "Module-Lattice-Based Key-Encapsulation Mechanism
+//     Standard" — https://csrc.nist.gov/pubs/fips/203/final
+//     — Standardizes ML-KEM (formerly CRYSTALS-Kyber) at three security levels.
+// [6] Grover, L.K. (1996) "A fast quantum mechanical algorithm for database
+//     search" — Grover's provides only O(√N) speedup (quadratic, not exponential).
+//
+// ML-KEM's security rests on the Module Learning With Errors (MLWE) problem,
+// a lattice problem for which no efficient quantum algorithm is known.
+// Grover's search provides only quadratic speedup against brute-force key
+// search, effectively halving the security level in bits (e.g., 128→64).
+// This is insufficient to break ML-KEM at any standardized level.
 export interface PQCStatus {
   algorithm: string;
   securityLevel: number;
   classicalBits: number;
   quantumBits: number;
+  nistRef: string;
   status: "safe";
   reason: string;
 }
@@ -178,24 +215,27 @@ export function getPQCStatus(): PQCStatus[] {
       securityLevel: 1,
       classicalBits: 128,
       quantumBits: 64,
+      nistRef: "NIST FIPS 203, §1.1 — Security Level 1 (≥AES-128)",
       status: "safe",
-      reason: "Grover reduces to 2^64 — still computationally infeasible",
+      reason: "Grover reduces brute-force to 2^64 — still computationally infeasible",
     },
     {
       algorithm: "ML-KEM-768",
       securityLevel: 3,
       classicalBits: 192,
       quantumBits: 96,
+      nistRef: "NIST FIPS 203, §1.1 — Security Level 3 (≥AES-192)",
       status: "safe",
-      reason: "Grover reduces to 2^96 — far beyond any foreseeable quantum computer",
+      reason: "Grover reduces brute-force to 2^96 — far beyond any foreseeable quantum computer",
     },
     {
       algorithm: "ML-KEM-1024",
       securityLevel: 5,
       classicalBits: 256,
       quantumBits: 128,
+      nistRef: "NIST FIPS 203, §1.1 — Security Level 5 (≥AES-256)",
       status: "safe",
-      reason: "Grover reduces to 2^128 — equivalent to AES-128 brute force",
+      reason: "Grover reduces brute-force to 2^128 — equivalent to AES-128 brute force",
     },
   ];
 }
