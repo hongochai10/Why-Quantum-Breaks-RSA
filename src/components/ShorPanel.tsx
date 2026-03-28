@@ -1,21 +1,36 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
 import QuantumCircuit from "./QuantumCircuit";
+
+function validateInput(value: string): string | null {
+  if (value.trim() === "") return "Please enter a number.";
+  const n = Number(value);
+  if (!Number.isFinite(n) || !Number.isInteger(n)) return "Please enter a valid integer.";
+  if (n < 2) return "Number must be at least 2.";
+  if (n > 999) return "Number must be 999 or less.";
+  return null;
+}
+
+const COOLDOWN_MS = 1500;
 
 export default function ShorPanel() {
   const [inputN, setInputN] = useState("15");
   const [result, setResult] = useState<ShorResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
+  const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(false);
+  const cooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const presets = [15, 21, 35, 77, 91, 143];
 
   const simulate = useCallback(async (n: number) => {
     setIsRunning(true);
     setResult(null);
+    setError(null);
     setCurrentStep(-1);
 
     const shorResult = runShor(n);
@@ -28,14 +43,30 @@ export default function ShorPanel() {
 
     setResult(shorResult);
     setIsRunning(false);
+
+    // Cooldown to prevent spam
+    setCooldown(true);
+    if (cooldownRef.current) clearTimeout(cooldownRef.current);
+    cooldownRef.current = setTimeout(() => setCooldown(false), COOLDOWN_MS);
   }, []);
 
-  const handleRun = () => {
-    const n = parseInt(inputN);
-    if (n > 1 && n < 1000 && !isRunning) {
-      simulate(n);
-    }
+  const handleInputChange = (value: string) => {
+    setInputN(value);
+    if (error) setError(validateInput(value));
   };
+
+  const handleRun = () => {
+    const validationError = validateInput(inputN);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    if (isRunning || cooldown) return;
+    setError(null);
+    simulate(Number(inputN));
+  };
+
+  const isButtonDisabled = isRunning || cooldown || validateInput(inputN) !== null;
 
   return (
     <section aria-labelledby="shor-panel-heading" className="flex flex-col gap-4 h-full">
@@ -80,7 +111,7 @@ export default function ShorPanel() {
             id="shor-number-input"
             type="number"
             value={inputN}
-            onChange={(e) => setInputN(e.target.value)}
+            onChange={(e) => handleInputChange(e.target.value)}
             aria-describedby="shor-input-range"
             className="flex-1 bg-[#12121e] border border-[#2a2a40] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:border-[#ff4d6a] transition-colors"
             min={2}
@@ -89,14 +120,21 @@ export default function ShorPanel() {
           />
           <button
             onClick={handleRun}
-            disabled={isRunning}
-            aria-label={isRunning ? "Factoring in progress" : `Factor the number ${inputN}`}
+            disabled={isButtonDisabled}
+            aria-label={isRunning ? "Factoring in progress" : cooldown ? "Please wait before trying again" : `Factor the number ${inputN}`}
             className="px-4 py-2 rounded bg-[#ff4d6a] hover:bg-[#ff3355] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#ff4d6a] focus:ring-offset-2 focus:ring-offset-[#0d0d18]"
           >
-            {isRunning ? "Running..." : "Factor"}
+            {isRunning ? "Running..." : cooldown ? "Wait..." : "Factor"}
           </button>
         </div>
         <p id="shor-input-range" className="sr-only">Enter a number between 2 and 999</p>
+
+        {/* Validation Error */}
+        {error && (
+          <p className="text-xs text-[#ff4d6a] mt-2 font-mono" role="alert">
+            ⚠ {error}
+          </p>
+        )}
 
         {/* Presets */}
         <div className="flex gap-2 mt-3 flex-wrap" role="group" aria-label="Preset numbers to factor">
@@ -188,6 +226,31 @@ export default function ShorPanel() {
               <p className="text-[10px] text-gray-600 mt-1">
                 Ref: Shor (1994) · Beauregard (2003) · Gidney &amp; Ekerå (2021)
               </p>
+            </div>
+          </motion.div>
+        )}
+        {result && !result.success && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="rounded-lg bg-yellow-500/10 border border-yellow-500/30 p-3"
+            role="alert"
+          >
+            <div className="text-center">
+              <span className="text-yellow-500 font-mono text-sm font-bold">
+                Could not factor {result.n} in this run
+              </span>
+              <p className="text-xs text-gray-400 mt-1">
+                Shor&apos;s algorithm is probabilistic — the chosen random values didn&apos;t yield factors this time. Try again!
+              </p>
+              <button
+                onClick={() => simulate(result.n)}
+                disabled={isRunning || cooldown}
+                className="mt-2 px-3 py-1 text-xs rounded bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-1 focus:ring-offset-[#12121e]"
+              >
+                Retry with new random &apos;a&apos;
+              </button>
             </div>
           </motion.div>
         )}

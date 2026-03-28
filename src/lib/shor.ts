@@ -41,29 +41,9 @@ function findPeriod(a: number, n: number): number | null {
   return null;
 }
 
-export function runShor(n: number): ShorResult {
-  const steps: ShorStep[] = [];
-
-  steps.push({
-    label: "Input",
-    description: `Factor N = ${n}`,
-    detail: `We want to find the prime factors of ${n} using quantum period-finding.`,
-  });
-
-  // Check trivial cases
-  if (n % 2 === 0) {
-    steps.push({
-      label: "Trivial",
-      description: `${n} is even`,
-      detail: `N is divisible by 2. Factors: 2 × ${n / 2}`,
-    });
-    return { n, a: 2, period: null, factor1: 2, factor2: n / 2, steps, success: true };
-  }
-
+function runShorAttempt(n: number, steps: ShorStep[]): ShorResult {
   // Pick random a coprime to n (Shor's algorithm requirement)
-  // Avoid hardcoded values — instead, randomly select and verify gcd(a,n)=1
   let a = 2 + Math.floor(Math.random() * (n - 3));
-  // Retry if a shares a factor with n (up to a few tries for small n)
   for (let attempt = 0; attempt < 10 && gcd(a, n) > 1; attempt++) {
     a = 2 + Math.floor(Math.random() * (n - 3));
   }
@@ -103,7 +83,7 @@ export function runShor(n: number): ShorResult {
     steps.push({
       label: "Failed",
       description: `Period ${period} is odd or not found`,
-      detail: `The period r = ${period} is odd. Shor's algorithm requires an even period. Retry with a different 'a'.`,
+      detail: `The period r = ${period} is ${period === null ? "not found" : "odd"}. Shor's algorithm requires an even period. Retry with a different 'a'.`,
     });
     return { n, a, period, factor1: null, factor2: null, steps, success: false };
   }
@@ -136,6 +116,47 @@ export function runShor(n: number): ShorResult {
     detail: `Got trivial factors (1 or N). Need to retry with a different 'a'.`,
   });
   return { n, a, period, factor1: null, factor2: null, steps, success: false };
+}
+
+const MAX_SHOR_RETRIES = 3;
+
+export function runShor(n: number): ShorResult {
+  const steps: ShorStep[] = [];
+
+  steps.push({
+    label: "Input",
+    description: `Factor N = ${n}`,
+    detail: `We want to find the prime factors of ${n} using quantum period-finding.`,
+  });
+
+  // Check trivial cases
+  if (n % 2 === 0) {
+    steps.push({
+      label: "Trivial",
+      description: `${n} is even`,
+      detail: `N is divisible by 2. Factors: 2 × ${n / 2}`,
+    });
+    return { n, a: 2, period: null, factor1: 2, factor2: n / 2, steps, success: true };
+  }
+
+  // Auto-retry with different 'a' values (max 3 attempts)
+  for (let attempt = 1; attempt <= MAX_SHOR_RETRIES; attempt++) {
+    if (attempt > 1) {
+      steps.push({
+        label: "Retry",
+        description: `Attempt ${attempt}/${MAX_SHOR_RETRIES}`,
+        detail: `Previous attempt failed. Trying a new random value of 'a'.`,
+      });
+    }
+
+    const result = runShorAttempt(n, steps);
+    if (result.success) return result;
+
+    if (attempt === MAX_SHOR_RETRIES) return result;
+  }
+
+  // Unreachable, but satisfies TypeScript
+  return { n, a: 0, period: null, factor1: null, factor2: null, steps, success: false };
 }
 
 // RSA key sizes and estimated logical qubits needed to break them

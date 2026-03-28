@@ -4,6 +4,7 @@ import { useState } from "react";
 import ShorPanel from "@/components/ShorPanel";
 import PQCPanel from "@/components/PQCPanel";
 import QubitSlider from "@/components/QubitSlider";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function Home() {
   const [qubitCount, setQubitCount] = useState(2000);
@@ -54,12 +55,16 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
             {/* Left Panel - Classical RSA */}
             <div className="rounded-xl bg-[#12121e] border border-[#ff4d6a]/20 p-6 glow-red">
-              <ShorPanel />
+              <ErrorBoundary>
+                <ShorPanel />
+              </ErrorBoundary>
             </div>
 
             {/* Right Panel - Post-Quantum */}
             <div className="rounded-xl bg-[#12121e] border border-[#00e88f]/20 p-6 glow-green">
-              <PQCPanel qubitCount={qubitCount} />
+              <ErrorBoundary>
+                <PQCPanel qubitCount={qubitCount} />
+              </ErrorBoundary>
             </div>
           </div>
         </div>
