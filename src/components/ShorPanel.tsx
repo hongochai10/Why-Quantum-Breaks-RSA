@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
-import { ANIMATION, SHOR_PRESETS } from "@/lib/constants";
+import { ANIMATION, SHOR_PRESETS, QUANTUM_GATES } from "@/lib/constants";
 import QuantumCircuit from "./QuantumCircuit";
 
 interface ShorPanelProps {
@@ -139,7 +139,7 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
       {/* Quantum Circuit Visualization */}
       <QuantumCircuit
         active={isRunning}
-        step={Math.min(currentStep, 3)}
+        step={Math.min(currentStep, QUANTUM_GATES.length - 1)}
       />
 
       {/* Input Section */}

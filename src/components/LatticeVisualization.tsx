@@ -32,6 +32,8 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
   const searchAttempts = useMemo(() => {
     const attempts: { x: number; y: number }[] = [];
     const seed = qubitCount;
+    // Scale search attempts by qubit count: dividing by 500 maps typical qubit ranges (1000-4096)
+    // to 0-~8 additional attempts, capped at 6 total to keep the visualization readable.
     for (let k = 0; k < Math.min(6, Math.floor(qubitCount / 500) + 2); k++) {
       const idx = ((seed * (k + 1) * 7) % points.length);
       if (!points[idx].isTarget) {
