@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { getRSABreakpoints } from "@/lib/shor";
+import { COLORS } from "@/lib/constants";
 
 interface QubitSliderProps {
   value: number;
@@ -14,7 +15,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
   const brokenCount = breakpoints.filter((b) => b.status === "broken").length;
 
   return (
-    <section className="rounded-xl bg-[#12121e] border border-[#1e1e30] p-4 md:p-6" aria-labelledby="qubit-slider-heading">
+    <section className="rounded-xl bg-panel-bg border border-panel-border p-4 md:p-6" aria-labelledby="qubit-slider-heading">
       {/* Slider Header */}
       <div className="flex items-center justify-between mb-3 md:mb-4 gap-4">
         <div className="min-w-0">
@@ -24,7 +25,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
           </p>
         </div>
         <div className="text-right shrink-0">
-          <div className="text-xl md:text-2xl font-bold font-mono text-[#a855f7]" aria-live="polite" aria-atomic="true">
+          <div className="text-xl md:text-2xl font-bold font-mono text-accent-purple" aria-live="polite" aria-atomic="true">
             {value.toLocaleString()}
           </div>
           <div className="text-[10px] text-gray-500">logical qubits</div>
@@ -62,9 +63,9 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
 
         <div className="relative">
           {/* Progress bar background */}
-          <div className="w-full h-1 bg-[#1a1a2e] rounded-full mb-4">
+          <div className="w-full h-1 bg-surface-dark rounded-full mb-4">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[#ff4d6a] to-[#ff4d6a]"
+              className="h-full rounded-full bg-gradient-to-r from-accent-red to-accent-red"
               animate={{ width: `${(value / 10000) * 100}%` }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
             />
@@ -85,7 +86,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                     style={{
                       left: `${position}%`,
                       backgroundColor:
-                        bp.status === "broken" ? "#ff4d6a" : "#2a2a40",
+                        bp.status === "broken" ? COLORS.red : COLORS.borderDark,
                     }}
                   />
                 </div>
@@ -95,7 +96,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                   <div className="flex items-center gap-2 min-w-0">
                     <motion.div
                       className={`w-2 h-2 rounded-full shrink-0 ${
-                        bp.status === "broken" ? "bg-[#ff4d6a]" : "bg-[#00e88f]"
+                        bp.status === "broken" ? "bg-accent-red" : "bg-accent-green"
                       }`}
                       aria-hidden="true"
                       animate={
@@ -108,7 +109,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                     <span
                       className={`text-xs md:text-sm font-mono truncate ${
                         bp.status === "broken"
-                          ? "text-[#ff4d6a] line-through"
+                          ? "text-accent-red line-through"
                           : "text-white"
                       }`}
                     >
@@ -123,8 +124,8 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                     <span
                       className={`text-[10px] px-1.5 md:px-2 py-0.5 rounded font-mono ${
                         bp.status === "broken"
-                          ? "bg-[#ff4d6a]/10 text-[#ff4d6a]"
-                          : "bg-[#00e88f]/10 text-[#00e88f]"
+                          ? "bg-accent-red/10 text-accent-red"
+                          : "bg-accent-green/10 text-accent-green"
                       }`}
                     >
                       {bp.status === "broken" ? "BROKEN" : "SAFE"}
@@ -137,13 +138,13 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
         </div>
 
         {/* ML-KEM comparison */}
-        <div className="mt-4 pt-3 border-t border-[#1e1e30]">
+        <div className="mt-4 pt-3 border-t border-panel-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#00e88f]" />
-              <span className="text-sm font-mono text-[#00e88f]">ML-KEM (all levels)</span>
+              <div className="w-2 h-2 rounded-full bg-accent-green" />
+              <span className="text-sm font-mono text-accent-green">ML-KEM (all levels)</span>
             </div>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-[#00e88f]/10 text-[#00e88f] font-mono">
+            <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/10 text-accent-green font-mono">
               ALWAYS SAFE
             </span>
           </div>

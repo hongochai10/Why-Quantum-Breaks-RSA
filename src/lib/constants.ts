@@ -3,6 +3,7 @@
 // Brand colors
 export const COLORS = {
   red: "#ff4d6a",
+  redHover: "#ff3355",
   green: "#00e88f",
   purple: "#a855f7",
   blue: "#4d9fff",
@@ -12,6 +13,8 @@ export const COLORS = {
   cardBg: "#12121e",
   surfaceDark: "#1a1a2e",
   borderDark: "#2a2a40",
+  gridLine: "#1a1a30",
+  surfaceMuted: "#2a2a50",
 } as const;
 
 // Animation durations (ms)

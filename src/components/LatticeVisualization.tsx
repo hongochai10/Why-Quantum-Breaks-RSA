@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
-import { ANIMATION, LATTICE_GRID_SIZE } from "@/lib/constants";
+import { ANIMATION, COLORS, LATTICE_GRID_SIZE } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
   qubitCount: number;
@@ -79,7 +79,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
   }, [gridSize, points]);
 
   return (
-    <div className="relative w-full h-36 md:h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4 overflow-hidden">
+    <div className="relative w-full h-36 md:h-48 rounded-lg bg-surface-deep border border-panel-border p-4 overflow-hidden">
       <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
         LATTICE PROBLEM (SVP)
       </div>
@@ -93,7 +93,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
             y1={line.y1}
             x2={line.x2}
             y2={line.y2}
-            stroke="#1a1a30"
+            stroke={COLORS.gridLine}
             strokeWidth="0.5"
           />
         ))}
@@ -105,7 +105,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
             cx={pt.x}
             cy={pt.y}
             r={pt.isTarget ? 5 : 2}
-            fill={pt.isTarget ? "#00e88f" : "#2a2a50"}
+            fill={pt.isTarget ? COLORS.green : COLORS.surfaceMuted}
             animate={
               pt.isTarget && !shouldReduceMotion
                 ? {
@@ -126,7 +126,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
               key={i}
               x={pt.x + 10}
               y={pt.y - 8}
-              fill="#00e88f"
+              fill={COLORS.green}
               fontSize="8"
               fontFamily="monospace"
             >
@@ -142,7 +142,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
               cy={pt.y}
               r="8"
               fill="none"
-              stroke="#ff4d6a"
+              stroke={COLORS.red}
               strokeWidth="1"
               strokeDasharray="3 2"
               initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0 }}
@@ -153,7 +153,7 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
               x={pt.x}
               y={pt.y - 12}
               textAnchor="middle"
-              fill="#ff4d6a"
+              fill={COLORS.red}
               fontSize="7"
               fontFamily="monospace"
               initial={{ opacity: 0 }}
