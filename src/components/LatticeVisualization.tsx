@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { ANIMATION, COLORS, LATTICE_GRID_SIZE } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
@@ -43,21 +43,30 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
 
   // Animate search attempts one at a time
   const [visibleAttempts, setVisibleAttempts] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
     setVisibleAttempts(0);
     if (searchAttempts.length === 0) return;
 
     let current = 0;
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       current++;
       setVisibleAttempts(current);
-      if (current >= searchAttempts.length) {
-        clearInterval(interval);
+      if (current >= searchAttempts.length && intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     }, animationSpeedMs);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
   }, [searchAttempts, animationSpeedMs]);
 
   // Memoize static grid lines
