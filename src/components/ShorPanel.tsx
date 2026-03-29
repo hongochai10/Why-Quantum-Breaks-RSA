@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
 import { ANIMATION, SHOR_PRESETS } from "@/lib/constants";
 import QuantumCircuit from "./QuantumCircuit";
@@ -21,6 +21,7 @@ function validateInput(value: string): string | null {
 }
 
 export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [inputN, setInputN] = useState("15");
   const [result, setResult] = useState<ShorResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -227,10 +228,10 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
           {result?.steps.map((step, i) => (
             <motion.div
               key={`${result.n}-${i}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ delay: i * 0.1 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { delay: i * 0.1 }}
               className="mb-3 last:mb-0"
             >
               <article className="flex items-start gap-3">
@@ -275,9 +276,10 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
       <AnimatePresence>
         {result?.success && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
+            transition={shouldReduceMotion ? { duration: 0 } : undefined}
             className="rounded-lg bg-[#ff4d6a]/10 border border-[#ff4d6a]/30 p-4 glow-red"
             role="alert"
           >
@@ -296,9 +298,10 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
         )}
         {result && !result.success && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
+            transition={shouldReduceMotion ? { duration: 0 } : undefined}
             className="rounded-lg bg-yellow-500/10 border border-yellow-500/30 p-4"
             role="alert"
           >

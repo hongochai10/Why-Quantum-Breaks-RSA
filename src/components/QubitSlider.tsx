@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { getRSABreakpoints } from "@/lib/shor";
 
 interface QubitSliderProps {
@@ -9,6 +9,7 @@ interface QubitSliderProps {
 }
 
 export default function QubitSlider({ value, onChange }: QubitSliderProps) {
+  const shouldReduceMotion = useReducedMotion();
   const breakpoints = getRSABreakpoints(value);
   const brokenCount = breakpoints.filter((b) => b.status === "broken").length;
 
@@ -65,7 +66,7 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-[#ff4d6a] to-[#ff4d6a]"
               animate={{ width: `${(value / 10000) * 100}%` }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
             />
           </div>
 
@@ -98,11 +99,11 @@ export default function QubitSlider({ value, onChange }: QubitSliderProps) {
                       }`}
                       aria-hidden="true"
                       animate={
-                        bp.status === "broken"
+                        bp.status === "broken" && !shouldReduceMotion
                           ? { scale: [1, 1.3, 1] }
                           : {}
                       }
-                      transition={{ duration: 1, repeat: Infinity }}
+                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, repeat: Infinity }}
                     />
                     <span
                       className={`text-xs md:text-sm font-mono truncate ${

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { getPQCStatus } from "@/lib/shor";
 import LatticeVisualization from "./LatticeVisualization";
 
@@ -10,6 +10,7 @@ interface PQCPanelProps {
 }
 
 export default function PQCPanel({ qubitCount, animationSpeedMs }: PQCPanelProps) {
+  const shouldReduceMotion = useReducedMotion();
   const pqcAlgorithms = getPQCStatus();
 
   // Grover speedup: only sqrt improvement
@@ -142,6 +143,7 @@ export default function PQCPanel({ qubitCount, animationSpeedMs }: PQCPanelProps
               className="flex items-center justify-between rounded px-3 py-2 bg-[#00e88f]/5 border border-[#00e88f]/10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              transition={shouldReduceMotion ? { duration: 0 } : undefined}
             >
               <div className="flex items-center gap-2 min-w-0">
                 <div className="w-2 h-2 rounded-full bg-[#00e88f] shrink-0" aria-hidden="true" />
@@ -163,8 +165,8 @@ export default function PQCPanel({ qubitCount, animationSpeedMs }: PQCPanelProps
       {/* Status */}
       <motion.div
         className="rounded-lg bg-[#00e88f]/10 border border-[#00e88f]/30 p-3 glow-green"
-        animate={{ opacity: [0.8, 1, 0.8] }}
-        transition={{ duration: 3, repeat: Infinity }}
+        animate={shouldReduceMotion ? { opacity: 1 } : { opacity: [0.8, 1, 0.8] }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 3, repeat: Infinity }}
         role="status"
         aria-live="polite"
       >

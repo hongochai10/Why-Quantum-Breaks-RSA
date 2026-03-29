@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
 
 interface QuantumCircuitProps {
@@ -10,6 +10,7 @@ interface QuantumCircuitProps {
 }
 
 function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
+  const shouldReduceMotion = useReducedMotion();
   // Memoize static qubit line positions
   const qubitLines = useMemo(
     () => Array.from({ length: QUBIT_COUNT }, (_, i) => 20 + i * 32),
@@ -55,12 +56,15 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
                     initial={{ opacity: 0.3 }}
                     animate={{
                       opacity: isActive ? 1 : 0.3,
-                      scale: isCurrentStep ? [1, 1.05, 1] : 1,
+                      scale: isCurrentStep && !shouldReduceMotion ? [1, 1.05, 1] : 1,
                     }}
-                    transition={{
-                      duration: 0.5,
-                      scale: { duration: 0.8, repeat: isCurrentStep ? Infinity : 0 },
-                    }}
+                    transition={shouldReduceMotion
+                      ? { duration: 0 }
+                      : {
+                          duration: 0.5,
+                          scale: { duration: 0.8, repeat: isCurrentStep ? Infinity : 0 },
+                        }
+                    }
                   />
                   <text
                     x={x}
@@ -98,14 +102,20 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
               r="3"
               fill="#4d9fff"
               initial={{ cx: 30, cy: y, opacity: 1 }}
-              animate={{
-                cx: [30, 90 + step * 100],
-                opacity: [1, 0.3, 1],
-              }}
-              transition={{
-                cx: { duration: 0.6, ease: "easeInOut" },
-                opacity: { duration: 1, repeat: Infinity },
-              }}
+              animate={shouldReduceMotion
+                ? { cx: 90 + step * 100, opacity: 1 }
+                : {
+                    cx: [30, 90 + step * 100],
+                    opacity: [1, 0.3, 1],
+                  }
+              }
+              transition={shouldReduceMotion
+                ? { duration: 0 }
+                : {
+                    cx: { duration: 0.6, ease: "easeInOut" },
+                    opacity: { duration: 1, repeat: Infinity },
+                  }
+              }
             />
           ))}
       </svg>

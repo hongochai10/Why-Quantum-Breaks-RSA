@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
 import { ANIMATION, LATTICE_GRID_SIZE } from "@/lib/constants";
 
@@ -10,6 +10,7 @@ interface LatticeVisualizationProps {
 }
 
 export default function LatticeVisualization({ qubitCount, animationSpeedMs = ANIMATION.speeds[ANIMATION.defaultSpeedIndex].value }: LatticeVisualizationProps) {
+  const shouldReduceMotion = useReducedMotion();
   const gridSize = LATTICE_GRID_SIZE;
 
   const points = useMemo(() => {
@@ -106,14 +107,14 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
             r={pt.isTarget ? 5 : 2}
             fill={pt.isTarget ? "#00e88f" : "#2a2a50"}
             animate={
-              pt.isTarget
+              pt.isTarget && !shouldReduceMotion
                 ? {
                     r: [5, 7, 5],
                     opacity: [1, 0.6, 1],
                   }
                 : {}
             }
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 2, repeat: Infinity }}
           />
         ))}
 
@@ -144,9 +145,9 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
               stroke="#ff4d6a"
               strokeWidth="1"
               strokeDasharray="3 2"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: [0, 0.8, 0.3], scale: [0, 1.2, 1] }}
-              transition={{ duration: 0.8 }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0 }}
+              animate={shouldReduceMotion ? { opacity: 0.5 } : { opacity: [0, 0.8, 0.3], scale: [0, 1.2, 1] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8 }}
             />
             <motion.text
               x={pt.x}
@@ -156,8 +157,8 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
               fontSize="7"
               fontFamily="monospace"
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0.5] }}
-              transition={{ duration: 0.6 }}
+              animate={shouldReduceMotion ? { opacity: 0.5 } : { opacity: [0, 1, 0.5] }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6 }}
             >
               ✗
             </motion.text>
