@@ -3,11 +3,16 @@ import { render, screen } from "@testing-library/react";
 import QuantumCircuit from "@/components/QuantumCircuit";
 
 describe("QuantumCircuit", () => {
-  it("renders the SVG with aria-label", () => {
-    render(<QuantumCircuit active={false} step={0} />);
+  it("renders the SVG with title, desc, and aria-labelledby", () => {
+    const { container } = render(<QuantumCircuit active={false} step={0} />);
     const svg = screen.getByRole("img");
     expect(svg).toBeInTheDocument();
-    expect(svg.getAttribute("aria-label")).toContain("Quantum circuit diagram");
+    expect(svg.getAttribute("aria-labelledby")).toBe("quantum-circuit-title quantum-circuit-desc");
+    const title = container.querySelector("#quantum-circuit-title");
+    const desc = container.querySelector("#quantum-circuit-desc");
+    expect(title).toBeInTheDocument();
+    expect(title!.textContent).toContain("Quantum circuit diagram");
+    expect(desc).toBeInTheDocument();
   });
 
   it("shows QUANTUM CIRCUIT label", () => {
@@ -38,15 +43,15 @@ describe("QuantumCircuit", () => {
     expect(screen.getByText("Measure")).toBeInTheDocument();
   });
 
-  it("aria-label includes step info when active", () => {
-    render(<QuantumCircuit active={true} step={2} />);
-    const svg = screen.getByRole("img");
-    expect(svg.getAttribute("aria-label")).toContain("Currently executing step 3");
+  it("desc includes step info when active", () => {
+    const { container } = render(<QuantumCircuit active={true} step={2} />);
+    const desc = container.querySelector("#quantum-circuit-desc");
+    expect(desc!.textContent).toContain("Currently executing step 3");
   });
 
-  it("aria-label does not include step info when inactive", () => {
-    render(<QuantumCircuit active={false} step={0} />);
-    const svg = screen.getByRole("img");
-    expect(svg.getAttribute("aria-label")).not.toContain("Currently executing");
+  it("desc does not include step info when inactive", () => {
+    const { container } = render(<QuantumCircuit active={false} step={0} />);
+    const desc = container.querySelector("#quantum-circuit-desc");
+    expect(desc!.textContent).not.toContain("Currently executing");
   });
 });

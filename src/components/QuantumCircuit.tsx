@@ -23,7 +23,9 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
         QUANTUM CIRCUIT
       </div>
 
-      <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-label={`Quantum circuit diagram with ${QUBIT_COUNT} qubit lines and ${QUANTUM_GATES.length} gates: Hadamard, Oracle, Inverse QFT, and Measure${active ? `. Currently executing step ${step + 1} of ${QUANTUM_GATES.length}` : ""}`}>
+      <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-labelledby="quantum-circuit-title quantum-circuit-desc">
+        <title id="quantum-circuit-title">{`Quantum circuit diagram with ${QUBIT_COUNT} qubit lines and ${QUANTUM_GATES.length} gates`}</title>
+        <desc id="quantum-circuit-desc">{`Hadamard, Oracle, Inverse QFT, and Measure${active ? `. Currently executing step ${step + 1} of ${QUANTUM_GATES.length}` : ""}`}</desc>
         {/* Qubit lines */}
         {qubitLines.map((y, i) => (
           <g key={i}>

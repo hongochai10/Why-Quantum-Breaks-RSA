@@ -3,12 +3,17 @@ import { render, screen } from "@testing-library/react";
 import LatticeVisualization from "@/components/LatticeVisualization";
 
 describe("LatticeVisualization", () => {
-  it("renders the SVG with descriptive aria-label", () => {
-    render(<LatticeVisualization qubitCount={1000} />);
+  it("renders the SVG with title, desc, and aria-labelledby", () => {
+    const { container } = render(<LatticeVisualization qubitCount={1000} />);
     const svg = screen.getByRole("img");
     expect(svg).toBeInTheDocument();
-    expect(svg.getAttribute("aria-label")).toContain("Lattice visualization");
-    expect(svg.getAttribute("aria-label")).toContain("Shortest Vector Problem");
+    expect(svg.getAttribute("aria-labelledby")).toBe("lattice-viz-title lattice-viz-desc");
+    const title = container.querySelector("#lattice-viz-title");
+    const desc = container.querySelector("#lattice-viz-desc");
+    expect(title).toBeInTheDocument();
+    expect(title!.textContent).toContain("Shortest Vector Problem");
+    expect(desc).toBeInTheDocument();
+    expect(desc!.textContent).toContain("grid");
   });
 
   it("shows the LATTICE PROBLEM label", () => {
@@ -43,9 +48,9 @@ describe("LatticeVisualization", () => {
     expect(lines.length).toBeGreaterThan(0);
   });
 
-  it("aria-label mentions search attempts count", () => {
-    render(<LatticeVisualization qubitCount={2000} />);
-    const svg = screen.getByRole("img");
-    expect(svg.getAttribute("aria-label")).toContain("quantum search attempts");
+  it("desc mentions search attempts count", () => {
+    const { container } = render(<LatticeVisualization qubitCount={2000} />);
+    const desc = container.querySelector("#lattice-viz-desc");
+    expect(desc!.textContent).toContain("quantum search attempts");
   });
 });

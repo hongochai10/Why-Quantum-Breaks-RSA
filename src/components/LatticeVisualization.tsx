@@ -93,7 +93,9 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
         LATTICE PROBLEM (SVP)
       </div>
 
-      <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-label={`Lattice visualization showing the Shortest Vector Problem. A grid of ${gridSize}×${gridSize} points with the closest vector highlighted. ${searchAttempts.length} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.`}>
+      <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-labelledby="lattice-viz-title lattice-viz-desc">
+        <title id="lattice-viz-title">{`Lattice visualization showing the Shortest Vector Problem`}</title>
+        <desc id="lattice-viz-desc">{`A grid of ${gridSize}×${gridSize} points with the closest vector highlighted. ${searchAttempts.length} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.`}</desc>
         {/* Grid lines */}
         {gridLines.map((line, idx) => (
           <line
