@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { runShor, type ShorResult } from "@/lib/shor";
 import { ANIMATION, SHOR_PRESETS } from "@/lib/constants";
@@ -32,6 +32,16 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
   const cooldownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pauseRef = useRef(false);
   const abortRef = useRef(false);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      abortRef.current = true;
+      if (cooldownRef.current) clearTimeout(cooldownRef.current);
+    };
+  }, []);
 
   const simulate = useCallback(async (n: number) => {
     setIsRunning(true);
@@ -52,9 +62,11 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
       }
       if (abortRef.current) break;
 
-      setCurrentStep(i);
+      if (mountedRef.current) setCurrentStep(i);
       await new Promise((r) => setTimeout(r, ANIMATION.speeds[speedIndex].value));
     }
+
+    if (!mountedRef.current) return;
 
     if (!abortRef.current) {
       setResult(shorResult);
@@ -64,7 +76,9 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
 
     setCooldown(true);
     if (cooldownRef.current) clearTimeout(cooldownRef.current);
-    cooldownRef.current = setTimeout(() => setCooldown(false), ANIMATION.cooldownMs);
+    cooldownRef.current = setTimeout(() => {
+      if (mountedRef.current) setCooldown(false);
+    }, ANIMATION.cooldownMs);
   }, [speedIndex]);
 
   const handleInputChange = (value: string) => {
