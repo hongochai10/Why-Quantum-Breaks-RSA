@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useMemo, useState, useEffect, useRef } from "react";
-import { ANIMATION, COLORS, LATTICE_GRID_SIZE } from "@/lib/constants";
+import { ANIMATION, COLORS, LATTICE_GRID_SIZE, LATTICE_LAYOUT } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
   qubitCount: number;
@@ -17,8 +17,8 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
     const pts: { x: number; y: number; isTarget: boolean }[] = [];
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
-        const baseX = 40 + i * 50 + j * 15;
-        const baseY = 20 + j * 45 - i * 5;
+        const baseX = LATTICE_LAYOUT.gridBaseX + i * LATTICE_LAYOUT.gridSpacingX + j * LATTICE_LAYOUT.gridSkewX;
+        const baseY = LATTICE_LAYOUT.gridBaseY + j * LATTICE_LAYOUT.gridSpacingY - i * LATTICE_LAYOUT.gridSkewY;
         pts.push({
           x: baseX,
           y: baseY,
@@ -32,9 +32,9 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
   const searchAttempts = useMemo(() => {
     const attempts: { x: number; y: number }[] = [];
     const seed = qubitCount;
-    // Scale search attempts by qubit count: dividing by 500 maps typical qubit ranges (1000-4096)
-    // to 0-~8 additional attempts, capped at 6 total to keep the visualization readable.
-    for (let k = 0; k < Math.min(6, Math.floor(qubitCount / 500) + 2); k++) {
+    // Scale search attempts by qubit count: dividing by qubitScaleDivisor maps typical qubit ranges (1000-4096)
+    // to 0-~8 additional attempts, capped at maxSearchAttempts to keep the visualization readable.
+    for (let k = 0; k < Math.min(LATTICE_LAYOUT.maxSearchAttempts, Math.floor(qubitCount / LATTICE_LAYOUT.qubitScaleDivisor) + LATTICE_LAYOUT.minSearchAttempts); k++) {
       const idx = ((seed * (k + 1) * 7) % points.length);
       if (!points[idx].isTarget) {
         attempts.push(points[idx]);

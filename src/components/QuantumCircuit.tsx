@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { COLORS, QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
+import { COLORS, CIRCUIT_LAYOUT, QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
 
 interface QuantumCircuitProps {
   active: boolean;
@@ -13,7 +13,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
   const shouldReduceMotion = useReducedMotion();
   // Memoize static qubit line positions
   const qubitLines = useMemo(
-    () => Array.from({ length: QUBIT_COUNT }, (_, i) => 20 + i * 32),
+    () => Array.from({ length: QUBIT_COUNT }, (_, i) => CIRCUIT_LAYOUT.qubitLineYStart + i * CIRCUIT_LAYOUT.qubitLineSpacing),
     []
   );
 
@@ -29,8 +29,8 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
         {/* Qubit lines */}
         {qubitLines.map((y, i) => (
           <g key={i}>
-            <line x1="30" y1={y} x2="470" y2={y} stroke={COLORS.borderDark} strokeWidth="1" />
-            <text x="5" y={y + 4} fill="#666" fontSize="10" fontFamily="monospace">
+            <line x1={CIRCUIT_LAYOUT.qubitLineX1} y1={y} x2={CIRCUIT_LAYOUT.qubitLineX2} y2={y} stroke={COLORS.borderDark} strokeWidth="1" />
+            <text x={CIRCUIT_LAYOUT.qubitLabelX} y={y + CIRCUIT_LAYOUT.qubitLabelYOffset} fill="#666" fontSize="10" fontFamily="monospace">
               |0⟩
             </text>
           </g>
@@ -38,7 +38,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
 
         {/* Gates */}
         {QUANTUM_GATES.map((gate, gIdx) => {
-          const x = 90 + gIdx * 100;
+          const x = CIRCUIT_LAYOUT.gateXStart + gIdx * CIRCUIT_LAYOUT.gateSpacing;
           const isActive = active && step >= gIdx;
           const isCurrentStep = active && step === gIdx;
 
@@ -47,11 +47,11 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
               {qubitLines.map((y, qIdx) => (
                 <g key={qIdx}>
                   <motion.rect
-                    x={x - 18}
-                    y={y - 12}
-                    width="36"
-                    height="24"
-                    rx="4"
+                    x={x - CIRCUIT_LAYOUT.gateWidth / 2}
+                    y={y - CIRCUIT_LAYOUT.gateHeight / 2}
+                    width={CIRCUIT_LAYOUT.gateWidth}
+                    height={CIRCUIT_LAYOUT.gateHeight}
+                    rx={CIRCUIT_LAYOUT.gateCornerRadius}
                     fill={isActive ? gate.color : COLORS.surfaceDark}
                     stroke={isActive ? gate.color : COLORS.borderDark}
                     strokeWidth="1"
@@ -70,7 +70,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
                   />
                   <text
                     x={x}
-                    y={y + 4}
+                    y={y + CIRCUIT_LAYOUT.gateLabelYOffset}
                     textAnchor="middle"
                     fill={isActive ? "#fff" : "#555"}
                     fontSize="10"
@@ -84,7 +84,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
               {/* Gate label */}
               <text
                 x={x}
-                y={20 + QUBIT_COUNT * 32 + 4}
+                y={CIRCUIT_LAYOUT.qubitLineYStart + QUBIT_COUNT * CIRCUIT_LAYOUT.qubitLineSpacing + CIRCUIT_LAYOUT.gateDescYPadding}
                 textAnchor="middle"
                 fill={isActive ? gate.color : "#444"}
                 fontSize="8"
@@ -101,13 +101,13 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
           qubitLines.map((y, i) => (
             <motion.circle
               key={i}
-              r="3"
+              r={CIRCUIT_LAYOUT.flowCircleRadius}
               fill={COLORS.blue}
-              initial={{ cx: 30, cy: y, opacity: 1 }}
+              initial={{ cx: CIRCUIT_LAYOUT.qubitLineX1, cy: y, opacity: 1 }}
               animate={shouldReduceMotion
-                ? { cx: 90 + step * 100, opacity: 1 }
+                ? { cx: CIRCUIT_LAYOUT.gateXStart + step * CIRCUIT_LAYOUT.gateSpacing, opacity: 1 }
                 : {
-                    cx: [30, 90 + step * 100],
+                    cx: [CIRCUIT_LAYOUT.qubitLineX1, CIRCUIT_LAYOUT.gateXStart + step * CIRCUIT_LAYOUT.gateSpacing],
                     opacity: [1, 0.3, 1],
                   }
               }

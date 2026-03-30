@@ -52,3 +52,34 @@ export const QUANTUM_GATES = [
 // Layout
 export const QUBIT_COUNT = 4;
 export const LATTICE_GRID_SIZE = 8;
+
+// QuantumCircuit SVG layout constants
+export const CIRCUIT_LAYOUT = {
+  qubitLineYStart: 20,
+  qubitLineSpacing: 32,
+  qubitLineX1: 30,
+  qubitLineX2: 470,
+  qubitLabelX: 5,
+  qubitLabelYOffset: 4,
+  gateXStart: 90,
+  gateSpacing: 100,
+  gateWidth: 36,
+  gateHeight: 24,
+  gateCornerRadius: 4,
+  gateLabelYOffset: 4,
+  gateDescYPadding: 4,
+  flowCircleRadius: 3,
+} as const;
+
+// LatticeVisualization SVG layout constants
+export const LATTICE_LAYOUT = {
+  gridBaseX: 40,
+  gridSpacingX: 50,
+  gridSkewX: 15,
+  gridBaseY: 20,
+  gridSpacingY: 45,
+  gridSkewY: 5,
+  qubitScaleDivisor: 500,
+  minSearchAttempts: 2,
+  maxSearchAttempts: 6,
+} as const;
