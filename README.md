@@ -108,4 +108,4 @@ The qubit estimates and cryptographic claims are based on published research:
 
 ## License
 
-This project is for educational purposes. No license file has been added yet — contact the repository owner for usage terms.
+This project is licensed under the [MIT License](LICENSE).
