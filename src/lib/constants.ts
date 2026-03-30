@@ -15,6 +15,7 @@ export const COLORS = {
   borderDark: "#2a2a40",
   gridLine: "#1a1a30",
   surfaceMuted: "#2a2a50",
+  borderHover: "#3a3a50",
 } as const;
 
 // Animation durations (ms)

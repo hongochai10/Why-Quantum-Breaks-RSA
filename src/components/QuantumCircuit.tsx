@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
+import { COLORS, QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
 
 interface QuantumCircuitProps {
   active: boolean;
@@ -18,7 +18,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
   );
 
   return (
-    <div className="relative w-full h-36 md:h-48 rounded-lg bg-[#0d0d18] border border-[#1e1e30] p-4 overflow-hidden">
+    <div className="relative w-full h-36 md:h-48 rounded-lg bg-surface-deep border border-panel-border p-4 overflow-hidden">
       <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
         QUANTUM CIRCUIT
       </div>
@@ -29,7 +29,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
         {/* Qubit lines */}
         {qubitLines.map((y, i) => (
           <g key={i}>
-            <line x1="30" y1={y} x2="470" y2={y} stroke="#2a2a40" strokeWidth="1" />
+            <line x1="30" y1={y} x2="470" y2={y} stroke={COLORS.borderDark} strokeWidth="1" />
             <text x="5" y={y + 4} fill="#666" fontSize="10" fontFamily="monospace">
               |0⟩
             </text>
@@ -52,8 +52,8 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
                     width="36"
                     height="24"
                     rx="4"
-                    fill={isActive ? gate.color : "#1a1a2e"}
-                    stroke={isActive ? gate.color : "#2a2a40"}
+                    fill={isActive ? gate.color : COLORS.surfaceDark}
+                    stroke={isActive ? gate.color : COLORS.borderDark}
                     strokeWidth="1"
                     initial={{ opacity: 0.3 }}
                     animate={{
@@ -102,7 +102,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
             <motion.circle
               key={i}
               r="3"
-              fill="#4d9fff"
+              fill={COLORS.blue}
               initial={{ cx: 30, cy: y, opacity: 1 }}
               animate={shouldReduceMotion
                 ? { cx: 90 + step * 100, opacity: 1 }
