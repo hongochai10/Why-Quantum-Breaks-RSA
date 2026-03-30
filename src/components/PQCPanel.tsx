@@ -4,6 +4,19 @@ import { motion, useReducedMotion } from "framer-motion";
 import { getPQCStatus } from "@/lib/shor";
 import LatticeVisualization from "./LatticeVisualization";
 
+// Grover speedup: only sqrt improvement — constant values hoisted to module scope
+const classicalOps = BigInt(2) ** BigInt(128);
+const quantumOps = BigInt(2) ** BigInt(64);
+
+function formatBigInt(n: bigint) {
+  const str = n.toString();
+  const exp = str.length - 1;
+  return { mantissa: `${str[0]}.${str.slice(1, 3)}`, exp };
+}
+
+const classicalFmt = formatBigInt(classicalOps);
+const quantumFmt = formatBigInt(quantumOps);
+
 interface PQCPanelProps {
   qubitCount: number;
   animationSpeedMs?: number;
@@ -12,18 +25,6 @@ interface PQCPanelProps {
 export default function PQCPanel({ qubitCount, animationSpeedMs }: PQCPanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const pqcAlgorithms = getPQCStatus();
-
-  // Grover speedup: only sqrt improvement
-  const classicalOps = BigInt(2) ** BigInt(128);
-  const quantumOps = BigInt(2) ** BigInt(64);
-
-  const formatBigInt = (n: bigint) => {
-    const str = n.toString();
-    const exp = str.length - 1;
-    return { mantissa: `${str[0]}.${str.slice(1, 3)}`, exp };
-  };
-  const classicalFmt = formatBigInt(classicalOps);
-  const quantumFmt = formatBigInt(quantumOps);
 
   return (
     <section aria-labelledby="pqc-panel-heading" className="flex flex-col gap-4 h-full">
