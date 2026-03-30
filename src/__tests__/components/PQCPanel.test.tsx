@@ -1,8 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import PQCPanel from "@/components/PQCPanel";
+import { __setReducedMotion, __resetReducedMotion } from "../mocks/framer-motion";
 
 describe("PQCPanel", () => {
+  afterEach(() => {
+    __resetReducedMotion();
+  });
   it("renders the heading", () => {
     render(<PQCPanel qubitCount={1000} />);
     expect(screen.getByText("Post-Quantum (ML-KEM)")).toBeInTheDocument();
@@ -71,5 +75,30 @@ describe("PQCPanel", () => {
     render(<PQCPanel qubitCount={1000} />);
     const matches = screen.getAllByText(/NIST FIPS 203/);
     expect(matches.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders correctly with reduced motion enabled", () => {
+    __setReducedMotion(true);
+    render(<PQCPanel qubitCount={2048} />);
+    expect(screen.getByText("Post-Quantum (ML-KEM)")).toBeInTheDocument();
+    expect(screen.getByText("ML-KEM remains secure at 2,048 qubits")).toBeInTheDocument();
+    const safeBadges = screen.getAllByText("SAFE");
+    expect(safeBadges.length).toBe(3);
+  });
+
+  it("renders with custom animationSpeedMs prop", () => {
+    render(<PQCPanel qubitCount={1000} animationSpeedMs={400} />);
+    expect(screen.getByText("Post-Quantum (ML-KEM)")).toBeInTheDocument();
+  });
+
+  it("displays formatted Grover comparison values", () => {
+    render(<PQCPanel qubitCount={1000} />);
+    expect(screen.getByText("Classical brute force")).toBeInTheDocument();
+    expect(screen.getByText("Grover's quantum search")).toBeInTheDocument();
+  });
+
+  it("renders with very high qubit count", () => {
+    render(<PQCPanel qubitCount={100000} />);
+    expect(screen.getByText("ML-KEM remains secure at 100,000 qubits")).toBeInTheDocument();
   });
 });

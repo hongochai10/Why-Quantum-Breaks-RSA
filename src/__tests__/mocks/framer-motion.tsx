@@ -35,6 +35,9 @@ const useAnimation = () => ({
   set: vi.fn(),
 });
 
-const useReducedMotion = () => false;
+let _reducedMotion = false;
+const useReducedMotion = () => _reducedMotion;
+const __setReducedMotion = (val: boolean) => { _reducedMotion = val; };
+const __resetReducedMotion = () => { _reducedMotion = false; };
 
-export { motion, AnimatePresence, useAnimation, useReducedMotion };
+export { motion, AnimatePresence, useAnimation, useReducedMotion, __setReducedMotion, __resetReducedMotion };
