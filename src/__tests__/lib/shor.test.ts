@@ -104,6 +104,43 @@ describe("runShor", () => {
     expect(result.steps.length).toBeGreaterThanOrEqual(1);
   });
 
+  it("reports failure with odd period and includes 'Failed' step", () => {
+    const mockRandom = vi.spyOn(Math, "random");
+    // Force a=4 for n=9: a = 2 + floor(random * 6), need floor(random*6)=2 → random ∈ [0.333, 0.5)
+    // gcd(4,9)=1 so proceeds to period-finding. findPeriod(4,9)=3 (odd) → failure.
+    // We need consistent 0.34 for all retry attempts to ensure odd period each time.
+    mockRandom.mockReturnValue(0.34);
+
+    const result = runShor(9);
+    // With a=4 and period=3 (odd), every attempt fails
+    expect(result.success).toBe(false);
+    expect(result.factor1).toBeNull();
+    expect(result.factor2).toBeNull();
+    // Should have a "Failed" step describing odd period
+    const failedStep = result.steps.find((s) => s.label === "Failed");
+    expect(failedStep).toBeDefined();
+    expect(failedStep!.description).toContain("odd");
+    // Should have retry steps
+    const retrySteps = result.steps.filter((s) => s.label === "Retry");
+    expect(retrySteps.length).toBe(2); // 3 attempts total, 2 retries
+
+    mockRandom.mockRestore();
+  });
+
+  it("returns correct failure shape when all retries exhausted", () => {
+    const mockRandom = vi.spyOn(Math, "random");
+    // Force repeated odd-period results for n=9 with a=4
+    mockRandom.mockReturnValue(0.34);
+
+    const result = runShor(9);
+    expect(result.success).toBe(false);
+    expect(result.n).toBe(9);
+    expect(result.period).toBeDefined(); // period is 3 (odd), not null
+    expect(result.steps.length).toBeGreaterThanOrEqual(3); // At least input + choose a + period + failed per attempt
+
+    mockRandom.mockRestore();
+  });
+
   it("result always has required shape", () => {
     const result = runShor(35);
     expect(result).toHaveProperty("n");

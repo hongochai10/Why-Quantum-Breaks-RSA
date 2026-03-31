@@ -134,6 +134,46 @@ describe("LatticeVisualization", () => {
       act(() => { vi.advanceTimersByTime(1200); });
       expect(screen.getByText("Grover: √n speedup only")).toBeInTheDocument();
     });
+
+    it("calls clearInterval on unmount and prevents further state updates", () => {
+      const clearIntervalSpy = vi.spyOn(globalThis, "clearInterval");
+      const { unmount } = render(
+        <LatticeVisualization qubitCount={2000} animationSpeedMs={100} />
+      );
+      // Advance partway so interval is active
+      act(() => { vi.advanceTimersByTime(100); });
+
+      const callsBefore = clearIntervalSpy.mock.calls.length;
+      unmount();
+
+      // clearInterval should have been called during cleanup
+      expect(clearIntervalSpy.mock.calls.length).toBeGreaterThan(callsBefore);
+
+      // Advancing timers after unmount should not throw
+      act(() => { vi.advanceTimersByTime(500); });
+
+      clearIntervalSpy.mockRestore();
+    });
+
+    it("clears previous interval before setting a new one on prop change", () => {
+      const clearIntervalSpy = vi.spyOn(globalThis, "clearInterval");
+      const { rerender } = render(
+        <LatticeVisualization qubitCount={2000} animationSpeedMs={100} />
+      );
+      act(() => { vi.advanceTimersByTime(100); });
+
+      const callsBefore = clearIntervalSpy.mock.calls.length;
+      // Change animationSpeedMs to trigger effect re-run
+      rerender(<LatticeVisualization qubitCount={2000} animationSpeedMs={200} />);
+
+      // clearInterval should have been called to clean up the old interval
+      expect(clearIntervalSpy.mock.calls.length).toBeGreaterThan(callsBefore);
+
+      act(() => { vi.advanceTimersByTime(1200); });
+      expect(screen.getByText("closest vector")).toBeInTheDocument();
+
+      clearIntervalSpy.mockRestore();
+    });
   });
 
   it("handles very small qubit count with minimal search attempts", () => {

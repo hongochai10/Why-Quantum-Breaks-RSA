@@ -467,4 +467,60 @@ describe("ShorPanel", () => {
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByLabelText("Factoring in progress")).toBeInTheDocument();
   });
+
+  // --- Error during cooldown (lines 91-93) ---
+
+  it("sets validation error and does not start simulation when input is invalid during cooldown", async () => {
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+
+    // Run simulation to completion to enter cooldown
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+    // Complete simulation steps (3 × 800ms)
+    for (let i = 0; i < 3; i++) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(800);
+      });
+    }
+
+    // Should be in cooldown now
+    expect(screen.getByText("Wait...")).toBeInTheDocument();
+
+    // Set invalid input while in cooldown
+    fireEvent.change(screen.getByRole("spinbutton"), {
+      target: { value: "1" },
+    });
+
+    // Advance past cooldown (1500ms)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+
+    // Now cooldown is over, but input is invalid — Run button should still be disabled
+    expect(screen.getByText("Run Shor's Algorithm")).toBeDisabled();
+
+    // Attempt to run — should set error and not call runShor again
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+    expect(mockedRunShor).toHaveBeenCalledTimes(1); // Only the first run
+  });
+
+  it("stop during cooldown resets to idle state", async () => {
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+
+    // Advance one step to be mid-simulation
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(800);
+    });
+
+    // Stop mid-simulation (triggers abort, which skips result, then enters cooldown)
+    fireEvent.click(screen.getByLabelText("Stop simulation"));
+
+    // Let the abort + cooldown timers resolve
+    await completeSimulation();
+
+    // Should be back to idle — no result shown, Run button re-enabled
+    expect(screen.queryByText(/15 = 3 × 5/)).not.toBeInTheDocument();
+    expect(screen.getByText("Run Shor's Algorithm")).not.toBeDisabled();
+  });
 });
