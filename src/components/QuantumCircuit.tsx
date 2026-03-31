@@ -55,16 +55,20 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
                     fill={isActive ? gate.color : COLORS.surfaceDark}
                     stroke={isActive ? gate.color : COLORS.borderDark}
                     strokeWidth="1"
-                    initial={{ opacity: 0.3 }}
+                    initial={{ opacity: 0.3, scale: 1 }}
                     animate={{
                       opacity: isActive ? 1 : 0.3,
-                      scale: isCurrentStep && !shouldReduceMotion ? [1, 1.05, 1] : 1,
+                      scale: isCurrentStep && !shouldReduceMotion ? 1.05 : 1,
                     }}
                     transition={shouldReduceMotion
                       ? { duration: 0 }
                       : {
                           duration: 0.5,
-                          scale: { duration: 0.8, repeat: isCurrentStep ? Infinity : 0 },
+                          scale: {
+                            duration: 0.4,
+                            repeat: isCurrentStep ? Infinity : 0,
+                            repeatType: "reverse" as const,
+                          },
                         }
                     }
                   />
@@ -98,28 +102,34 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
 
         {/* Flowing qubit animation — Framer Motion only (no raw SVG animate) */}
         {active &&
-          qubitLines.map((y, i) => (
-            <motion.circle
-              key={`${i}-${step}`}
-              r={CIRCUIT_LAYOUT.flowCircleRadius}
-              fill={COLORS.blue}
-              initial={{ cx: CIRCUIT_LAYOUT.qubitLineX1, cy: y, opacity: 1 }}
-              animate={shouldReduceMotion
-                ? { cx: CIRCUIT_LAYOUT.gateXStart + step * CIRCUIT_LAYOUT.gateSpacing, opacity: 1 }
-                : {
-                    cx: [CIRCUIT_LAYOUT.qubitLineX1, CIRCUIT_LAYOUT.gateXStart + step * CIRCUIT_LAYOUT.gateSpacing],
-                    opacity: [1, 0.3, 1],
-                  }
-              }
-              transition={shouldReduceMotion
-                ? { duration: 0 }
-                : {
-                    cx: { duration: 0.6, ease: "easeInOut" },
-                    opacity: { duration: 1, repeat: Infinity },
-                  }
-              }
-            />
-          ))}
+          qubitLines.map((y, i) => {
+            const prevX = step > 0
+              ? CIRCUIT_LAYOUT.gateXStart + (step - 1) * CIRCUIT_LAYOUT.gateSpacing
+              : CIRCUIT_LAYOUT.qubitLineX1;
+            const currX = CIRCUIT_LAYOUT.gateXStart + step * CIRCUIT_LAYOUT.gateSpacing;
+            return (
+              <motion.circle
+                key={`${i}-${step}`}
+                r={CIRCUIT_LAYOUT.flowCircleRadius}
+                fill={COLORS.blue}
+                initial={{ cx: prevX, cy: y, opacity: 1 }}
+                animate={shouldReduceMotion
+                  ? { cx: currX, opacity: 1 }
+                  : {
+                      cx: [prevX, currX],
+                      opacity: [1, 0.3, 1],
+                    }
+                }
+                transition={shouldReduceMotion
+                  ? { duration: 0 }
+                  : {
+                      cx: { duration: 0.6, ease: "easeInOut" },
+                      opacity: { duration: 1, repeat: Infinity },
+                    }
+                }
+              />
+            );
+          })}
       </svg>
     </div>
   );
