@@ -100,7 +100,7 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
         {active &&
           qubitLines.map((y, i) => (
             <motion.circle
-              key={i}
+              key={`${i}-${step}`}
               r={CIRCUIT_LAYOUT.flowCircleRadius}
               fill={COLORS.blue}
               initial={{ cx: CIRCUIT_LAYOUT.qubitLineX1, cy: y, opacity: 1 }}
