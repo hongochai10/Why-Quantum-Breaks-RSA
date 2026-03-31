@@ -118,6 +118,25 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
   outline: 2px solid var(--accent-purple);
   outline-offset: 2px;
 }
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  border: none;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+}
 
 /* Prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
