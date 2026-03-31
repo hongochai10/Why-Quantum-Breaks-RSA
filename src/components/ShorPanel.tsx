@@ -235,7 +235,7 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
       )}
 
       {/* Step-by-step Results */}
-      <div className="flex-1 overflow-y-auto rounded-lg bg-surface-deep border border-panel-border p-4" role="log" aria-label="Algorithm steps" aria-live="polite">
+      <div className="flex-1 overflow-y-auto rounded-lg bg-surface-deep border border-panel-border p-4" role="log" aria-label="Algorithm steps" aria-live="polite" aria-atomic="true">
         <h3 className="text-xs text-gray-500 font-mono mb-3">ALGORITHM STEPS</h3>
 
         <AnimatePresence mode="popLayout">

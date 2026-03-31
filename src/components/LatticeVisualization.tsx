@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { memo, useMemo, useState, useEffect, useRef } from "react";
 import { ANIMATION, COLORS, LATTICE_GRID_SIZE, LATTICE_LAYOUT } from "@/lib/constants";
 
 interface LatticeVisualizationProps {
@@ -9,7 +9,7 @@ interface LatticeVisualizationProps {
   animationSpeedMs?: number;
 }
 
-export default function LatticeVisualization({ qubitCount, animationSpeedMs = ANIMATION.speeds[ANIMATION.defaultSpeedIndex].value }: LatticeVisualizationProps) {
+export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs = ANIMATION.speeds[ANIMATION.defaultSpeedIndex].value }: LatticeVisualizationProps) {
   const shouldReduceMotion = useReducedMotion();
   const gridSize = LATTICE_GRID_SIZE;
 
@@ -185,4 +185,4 @@ export default function LatticeVisualization({ qubitCount, animationSpeedMs = AN
       </svg>
     </div>
   );
-}
+});
