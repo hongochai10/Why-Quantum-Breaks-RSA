@@ -5,6 +5,7 @@ import ShorPanel from "@/components/ShorPanel";
 import PQCPanel from "@/components/PQCPanel";
 import QubitSlider from "@/components/QubitSlider";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import QuantumQuiz from "@/components/QuantumQuiz";
 import { ANIMATION } from "@/lib/constants";
 
 export default function Home() {
@@ -66,6 +67,22 @@ export default function Home() {
             <div className="rounded-xl bg-panel-bg border border-accent-green/20 p-4 md:p-6 glow-green">
               <ErrorBoundary>
                 <PQCPanel qubitCount={qubitCount} animationSpeedMs={ANIMATION.speeds[speedIndex].value} />
+              </ErrorBoundary>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quiz Section */}
+      <div className="max-w-[1600px] mx-auto w-full px-4 md:px-6 pb-4 md:pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="lg:col-span-2 max-w-2xl mx-auto w-full">
+            <div className="rounded-xl bg-panel-bg border border-accent-purple/20 p-4 md:p-6">
+              <h2 className="text-base font-bold text-white mb-4">
+                Test Your Knowledge
+              </h2>
+              <ErrorBoundary>
+                <QuantumQuiz />
               </ErrorBoundary>
             </div>
           </div>
