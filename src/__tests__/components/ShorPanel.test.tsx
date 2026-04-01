@@ -503,6 +503,101 @@ describe("ShorPanel", () => {
     expect(mockedRunShor).toHaveBeenCalledTimes(1); // Only the first run
   });
 
+  // --- Error recovery guard (lines 92-93) ---
+  // handleRun validates input defensively even though the button is normally disabled
+  // for invalid input. To cover this guard, we invoke the handler via React fiber props.
+
+  function getReactOnClick(el: HTMLElement): (() => void) | undefined {
+    const key = Object.keys(el).find((k) => k.startsWith("__reactProps$"));
+    return key ? (el as Record<string, any>)[key]?.onClick : undefined;
+  }
+
+  it("handleRun sets validation error when invoked with empty input", () => {
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "" } });
+
+    // Directly invoke handleRun via React fiber — bypasses disabled button
+    const onClick = getReactOnClick(screen.getByText("Run Shor's Algorithm"));
+    act(() => onClick?.());
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/Please enter a number/);
+    expect(mockedRunShor).not.toHaveBeenCalled();
+  });
+
+  it("handleRun sets validation error when invoked with out-of-range input", () => {
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "1" } });
+
+    const onClick = getReactOnClick(screen.getByText("Run Shor's Algorithm"));
+    act(() => onClick?.());
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/Number must be at least 2/);
+    expect(mockedRunShor).not.toHaveBeenCalled();
+  });
+
+  it("handleRun clears error on subsequent valid input change", () => {
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+
+    // Trigger error via handleRun with invalid input
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "" } });
+    const onClick = getReactOnClick(screen.getByText("Run Shor's Algorithm"));
+    act(() => onClick?.());
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    // Now change to valid input — handleInputChange should clear error (line 86)
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "21" } });
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  // --- Cleanup verification ---
+
+  it("unmount during active simulation does not throw", async () => {
+    const { unmount } = render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+
+    // Unmount while simulation is running — verifies cleanup (lines 37-43)
+    expect(() => unmount()).not.toThrow();
+
+    // Drain any remaining timers to avoid leaks
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+  });
+
+  // --- Reduced motion (covers ternary branches lines 293-296, 315-318) ---
+
+  it("renders success result with reduced motion preferences", async () => {
+    const { __setReducedMotion, __resetReducedMotion } = await import("framer-motion") as any;
+    __setReducedMotion(true);
+
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+    await completeSimulation();
+
+    expect(screen.getByText(/15 = 3 × 5/)).toBeInTheDocument();
+    __resetReducedMotion();
+  });
+
+  it("renders failure result with reduced motion preferences", async () => {
+    const { __setReducedMotion, __resetReducedMotion } = await import("framer-motion") as any;
+    __setReducedMotion(true);
+
+    mockedRunShor.mockReturnValueOnce({
+      n: 15, a: 4, period: null, factor1: null, factor2: null,
+      steps: [{ label: "Fail", description: "No period found", detail: "detail" }],
+      success: false,
+    });
+
+    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    fireEvent.click(screen.getByText("Run Shor's Algorithm"));
+    await completeSimulation();
+
+    expect(screen.getByText(/Could not factor 15/)).toBeInTheDocument();
+    __resetReducedMotion();
+  });
+
   it("stop during cooldown resets to idle state", async () => {
     render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
