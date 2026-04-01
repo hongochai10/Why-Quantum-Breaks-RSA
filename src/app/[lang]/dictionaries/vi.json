@@ -1,0 +1,201 @@
+{
+  "metadata": {
+    "title": "Tại Sao Lượng Tử Phá Vỡ RSA",
+    "titleTemplate": "%s | Tại Sao Lượng Tử Phá Vỡ RSA",
+    "description": "Bảng điều khiển tương tác so sánh lỗ hổng RSA cổ điển với thuật toán Shor và khả năng chống chịu của mật mã hậu lượng tử",
+    "ogDescription": "Bảng điều khiển tương tác cho thấy máy tính lượng tử phá vỡ mã hóa RSA như thế nào và tại sao mật mã hậu lượng tử là giải pháp"
+  },
+  "header": {
+    "titleWhy": "Tại Sao Lượng Tử ",
+    "titleBreaks": "Phá Vỡ",
+    "titleRSA": " RSA",
+    "subtitle": "So sánh tương tác: Mật mã cổ điển vs Bảo mật hậu lượng tử",
+    "vulnerable": "Dễ bị tấn công",
+    "quantumSafe": "An toàn lượng tử",
+    "skipToContent": "Chuyển đến nội dung chính"
+  },
+  "footer": {
+    "disclaimer": "Mô phỏng giáo dục — ước tính qubit là gần đúng dựa trên nghiên cứu hiện tại",
+    "nistRef": "Tiêu chuẩn NIST PQC: FIPS 203 (ML-KEM) · Tháng 8/2024"
+  },
+  "localeSwitcher": {
+    "en": "EN",
+    "vi": "VI",
+    "label": "Ngôn ngữ"
+  },
+  "qubitSlider": {
+    "heading": "Số Qubit",
+    "description": "Kéo thanh trượt để mô phỏng việc mở rộng máy tính lượng tử",
+    "logicalQubits": "qubit logic",
+    "qubitCountLabel": "Số qubit: {value}",
+    "qubitCountValueText": "{value} qubit logic",
+    "rsaKeyVulnerability": "LỖ HỔNG KHÓA RSA ({broken}/{total} bị phá)",
+    "qubits": "~{value} qubit",
+    "statusBroken": "BỊ PHÁ",
+    "statusSafe": "AN TOÀN",
+    "mlkemAllLevels": "ML-KEM (tất cả cấp độ)",
+    "alwaysSafe": "LUÔN AN TOÀN",
+    "mlkemExplanation": "Không tồn tại ngưỡng qubit — bài toán lưới không có giải pháp lượng tử hiệu quả"
+  },
+  "shorPanel": {
+    "heading": "RSA / ECC Cổ Điển",
+    "vulnerable": "DỄ BỊ TẤN CÔNG",
+    "descPart1": "Thuật toán Shor sử dụng ",
+    "quantumPeriodFinding": "tìm chu kỳ lượng tử",
+    "descPart2": " để phân tích thừa số nhanh hơn theo cấp số mũ so với bất kỳ thuật toán cổ điển nào. Bước then chốt là ",
+    "modularExponentiation": "lũy thừa modular",
+    "descPart3": " trong chồng chập, tiếp theo là ",
+    "qft": "QFT",
+    "descPart4": ". Điều này phá vỡ RSA, vốn dựa vào độ khó của việc phân tích thừa số.",
+    "inputLabel": "NHẬP SỐ ĐỂ PHÂN TÍCH (Mô phỏng Shor)",
+    "inputRange": "Nhập một số từ 2 đến 999",
+    "runButton": "Chạy Thuật Toán Shor",
+    "running": "Đang chạy...",
+    "wait": "Chờ...",
+    "runAriaLabel": "Chạy thuật toán Shor trên {n}",
+    "factoringAriaLabel": "Đang phân tích thừa số",
+    "waitAriaLabel": "Vui lòng chờ trước khi thử lại",
+    "pause": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "pauseAriaLabel": "Tạm dừng mô phỏng",
+    "resumeAriaLabel": "Tiếp tục mô phỏng",
+    "stop": "Dừng",
+    "stopAriaLabel": "Dừng mô phỏng",
+    "speed": "Tốc độ:",
+    "speedAriaLabel": "Tốc độ hoạt ảnh",
+    "setSpeedAriaLabel": "Đặt tốc độ {label}",
+    "algorithmSteps": "CÁC BƯỚC THUẬT TOÁN",
+    "algorithmStepsAriaLabel": "Các bước thuật toán",
+    "idlePrompt": "Nhập một số ở trên để mô phỏng thuật toán Shor",
+    "factoring": "Máy tính lượng tử đang phân tích thừa số...",
+    "paused": "Đã tạm dừng...",
+    "resultLine": "{n} = {f1} × {f2}",
+    "encryptionBroken": "Khóa RSA đã bị phân tích bởi máy tính lượng tử — mã hóa bị phá vỡ",
+    "shorRef": "Ref: Shor (1994) · Beauregard (2003) · Gidney & Ekerå (2021)",
+    "couldNotFactor": "Không thể phân tích {n} trong lần chạy này",
+    "probabilistic": "Thuật toán Shor mang tính xác suất — các giá trị ngẫu nhiên được chọn không cho ra thừa số lần này. Hãy thử lại!",
+    "retryButton": "Thử lại với 'a' ngẫu nhiên mới",
+    "presetAriaLabel": "Các số hợp số có sẵn để phân tích",
+    "compositeNumber": "Hợp số: {factors}",
+    "factorAriaLabel": "Phân tích {n} ({factors})",
+    "validation": {
+      "empty": "Vui lòng nhập một số.",
+      "invalid": "Vui lòng nhập một số nguyên hợp lệ.",
+      "tooSmall": "Số phải ít nhất là 2.",
+      "tooLarge": "Số không được vượt quá 999."
+    }
+  },
+  "pqcPanel": {
+    "heading": "Hậu Lượng Tử (ML-KEM)",
+    "secure": "AN TOÀN",
+    "descPart1": "ML-KEM (trước đây là CRYSTALS-Kyber), được chuẩn hóa trong ",
+    "nistFips203": "NIST FIPS 203",
+    "descPart2": ", dựa trên bài toán lưới ",
+    "mlwe": "MLWE",
+    "descPart3": ". Ngay cả máy tính lượng tử với thuật toán Grover cũng chỉ đạt được tăng tốc √n — không đủ để phá vỡ.",
+    "whyQuantumCantBreak": "TẠI SAO LƯỢNG TỬ KHÔNG THỂ PHÁ VỠ LƯỚI",
+    "groverTitle": "Thuật toán Grover: Chỉ tăng tốc √n",
+    "groverDesc": "Không giống tăng tốc theo cấp số mũ của Shor cho phân tích thừa số, tìm kiếm Grover chỉ cung cấp lợi thế bậc hai. 2^128 → 2^64 phép tính.",
+    "noKnownTitle": "Không có thuật toán lượng tử nào cho ",
+    "svp": "SVP",
+    "noKnownDesc": "Bài toán Vector Ngắn Nhất trong lưới nhiều chiều không có thuật toán lượng tử hiệu quả — khác với phân tích thừa số nguyên.",
+    "noiseTitle": "Nhiễu che giấu bí mật",
+    "lwe": "LWE",
+    "noiseDesc": " thêm nhiễu Gauss vào tính toán lưới. Ngay cả với chồng chập lượng tử, nhiễu ngăn cản việc trích xuất khóa bí mật.",
+    "groverComparison": "SO SÁNH TĂNG TỐC CỦA GROVER",
+    "classicalBruteForce": "Tìm kiếm vét cạn cổ điển",
+    "classicalBarAriaLabel": "Tìm kiếm vét cạn cổ điển: thanh đầy biểu thị 2 mũ 128 phép tính",
+    "groverQuantumSearch": "Tìm kiếm lượng tử Grover",
+    "groverBarAriaLabel": "Tìm kiếm lượng tử Grover: nửa thanh biểu thị 2 mũ 64 phép tính",
+    "infeasible": "Vẫn còn 1,8×10^19 phép tính — hoàn toàn không khả thi ngay cả với máy tính lượng tử",
+    "mlkemLevels": "CÁC CẤP ĐỘ BẢO MẬT ML-KEM",
+    "level": "Cấp",
+    "safe": "AN TOÀN",
+    "remainsSecure": "ML-KEM vẫn an toàn ở {qubits} qubit",
+    "noQuantumAlgo": "Không có thuật toán lượng tử nào có thể giải hiệu quả bài toán lưới",
+    "pqcRef": "Ref: NIST FIPS 203 (2024) · Grover (1996) · Regev (2005)"
+  },
+  "quantumCircuit": {
+    "label": "MẠCH LƯỢNG TỬ",
+    "title": "Sơ đồ mạch lượng tử với {qubits} đường qubit và {gates} cổng",
+    "desc": "Hadamard, Oracle, QFT Nghịch đảo, và Đo lường",
+    "executing": ". Đang thực thi bước {step} trên {total}"
+  },
+  "lattice": {
+    "label": "BÀI TOÁN LƯỚI (SVP)",
+    "title": "Trực quan hóa lưới cho thấy Bài toán Vector Ngắn Nhất",
+    "desc": "Lưới {size}×{size} điểm với vector gần nhất được đánh dấu. {attempts} lần tìm kiếm lượng tử được hiển thị, tất cả đều trượt mục tiêu — chứng minh thuật toán Grover chỉ cung cấp tăng tốc căn bậc hai.",
+    "closestVector": "vector gần nhất",
+    "groverSpeedup": "Grover: chỉ tăng tốc √n"
+  },
+  "quiz": {
+    "testYourKnowledge": "Kiểm Tra Kiến Thức",
+    "questionOf": "Câu hỏi {current} / {total}",
+    "selectAnswer": "Chọn câu trả lời cho câu hỏi {n}",
+    "checkAnswer": "Kiểm Tra",
+    "nextQuestion": "Câu Tiếp Theo",
+    "seeResults": "Xem Kết Quả",
+    "correct": "Chính xác!",
+    "incorrect": "Sai",
+    "quizComplete": "Hoàn Thành Bài Kiểm Tra",
+    "scoreAriaLabel": "Điểm: {score} trên {total}",
+    "tryAgain": "Thử Lại",
+    "excellentMessage": "Xuất sắc! Bạn có kiến thức vững chắc về mật mã lượng tử.",
+    "goodMessage": "Tốt lắm! Xem lại các chủ đề bạn sai để củng cố hiểu biết.",
+    "keepLearningMessage": "Hãy tiếp tục học! Các trực quan hóa ở trên có thể giúp bạn hiểu rõ hơn.",
+    "answerReview": "Xem lại đáp án",
+    "quizAriaLabel": "Bài kiểm tra mật mã lượng tử",
+    "resultsAriaLabel": "Kết quả bài kiểm tra",
+    "topicLabels": {
+      "rsa": "RSA",
+      "shor": "Thuật toán Shor",
+      "pqc": "Hậu lượng tử"
+    },
+    "questions": [
+      {
+        "question": "Bài toán toán học nào mà mã hóa RSA dựa vào để đảm bảo an toàn?",
+        "options": ["Bài toán logarit rời rạc", "Phân tích thừa số nguyên của các nửa nguyên tố lớn", "Phép nhân điểm trên đường cong elliptic", "Bài toán vector ngắn nhất trong lưới"],
+        "explanation": "Bảo mật RSA phụ thuộc vào độ khó của việc phân tích tích của hai số nguyên tố lớn. Máy tính cổ điển không thể phân tích hiệu quả các nửa nguyên tố lớn, đó là điều làm RSA an toàn ngày nay."
+      },
+      {
+        "question": "Thuật toán Shor giải hiệu quả bài toán gì trên máy tính lượng tử?",
+        "options": ["Tìm đường đi ngắn nhất trong đồ thị", "Tìm kiếm trong cơ sở dữ liệu chưa sắp xếp", "Phân tích thừa số nguyên và logarit rời rạc", "Giải các bài toán NP-đầy đủ"],
+        "explanation": "Thuật toán Shor có thể phân tích thừa số nguyên và tính logarit rời rạc trong thời gian đa thức trên máy tính lượng tử, phá vỡ RSA và nhiều hệ mật mã khóa công khai khác."
+      },
+      {
+        "question": "Ước tính cần bao nhiêu qubit logic để phá RSA-2048?",
+        "options": ["Khoảng 100 qubit", "Khoảng 1.000 qubit", "Khoảng 4.000 qubit", "Khoảng 1.000.000 qubit"],
+        "explanation": "Nghiên cứu hiện tại ước tính cần khoảng 4.000 qubit logic đã sửa lỗi để phân tích khóa RSA 2048-bit bằng thuật toán Shor, mặc dù yêu cầu qubit vật lý cao hơn nhiều do chi phí sửa lỗi."
+      },
+      {
+        "question": "ML-KEM (trước đây là CRYSTALS-Kyber) là gì?",
+        "options": ["Một ngôn ngữ lập trình máy tính lượng tử", "Cơ chế đóng gói khóa hậu lượng tử được NIST chuẩn hóa", "Một thuật toán mã hóa đối xứng cổ điển", "Một mã sửa lỗi lượng tử"],
+        "explanation": "ML-KEM (Cơ chế Đóng gói Khóa dựa trên Lưới Module), được chuẩn hóa là FIPS 203 vào tháng 8/2024, là cơ chế đóng gói khóa hậu lượng tử dựa trên độ khó của bài toán lưới."
+      },
+      {
+        "question": "Tại sao các hệ mật mã dựa trên lưới được coi là kháng lượng tử?",
+        "options": ["Chúng sử dụng vướng víu lượng tử để trao đổi khóa", "Không có thuật toán lượng tử nào có thể giải hiệu quả bài toán lưới như SVP", "Chúng cần nhiều qubit hơn mức có thể xây dựng", "Chúng dựa trên mật mã một lần, an toàn về mặt lý thuyết thông tin"],
+        "explanation": "Các hệ mật mã lưới dựa vào bài toán như Bài toán Vector Ngắn Nhất (SVP) và Học với Lỗi (LWE). Không có thuật toán lượng tử nào, kể cả Shor, có thể giải hiệu quả các bài toán này."
+      },
+      {
+        "question": "Tấn công \"thu hoạch bây giờ, giải mã sau\" là gì?",
+        "options": ["Đánh cắp khóa mã hóa từ máy tính lượng tử", "Thu thập dữ liệu mã hóa hôm nay để giải mã khi máy tính lượng tử sẵn có", "Sử dụng máy tính lượng tử để phá liên lạc thời gian thực", "Tấn công vét cạn chạy qua đêm"],
+        "explanation": "Kẻ tấn công có thể ghi lại lưu lượng mã hóa hôm nay và lưu trữ cho đến khi máy tính lượng tử đủ mạnh tồn tại để giải mã. Mối đe dọa \"thu hoạch bây giờ, giải mã sau\" này là lý do việc chuyển sang mật mã hậu lượng tử là cấp bách ngay cả trước khi máy tính lượng tử quy mô lớn được xây dựng."
+      },
+      {
+        "question": "Hiện tượng lượng tử nào mà thuật toán Shor khai thác để tìm chu kỳ của một hàm?",
+        "options": ["Hiệu ứng đường hầm lượng tử", "Chồng chập và giao thoa lượng tử qua Biến đổi Fourier Lượng tử", "Hoán đổi vướng víu lượng tử", "Mất kết hợp lượng tử"],
+        "explanation": "Thuật toán Shor sử dụng chồng chập để đánh giá một hàm tại nhiều đầu vào đồng thời, sau đó áp dụng Biến đổi Fourier Lượng tử (QFT) để trích xuất chu kỳ thông qua giao thoa tăng cường và triệt tiêu."
+      },
+      {
+        "question": "Quy trình NIST nào dẫn đến việc chuẩn hóa các thuật toán mật mã hậu lượng tử?",
+        "options": ["Sáng kiến Tính toán Lượng tử năm 2015", "Dự án Chuẩn hóa Mật mã Hậu Lượng tử bắt đầu năm 2016", "Cuộc thi Tiêu chuẩn Mã hóa Nâng cao", "Cuộc thi hàm băm SHA-3"],
+        "explanation": "NIST bắt đầu Dự án Chuẩn hóa Mật mã Hậu Lượng tử vào năm 2016, đánh giá các đề xuất qua nhiều vòng. Các tiêu chuẩn đầu tiên (FIPS 203, 204, 205) được công bố vào tháng 8/2024."
+      }
+    ]
+  },
+  "errorBoundary": {
+    "message": "Đã xảy ra lỗi khi hiển thị phần này.",
+    "retry": "Thử lại"
+  }
+}

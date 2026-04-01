@@ -1,7 +1,8 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
-import Home from "@/app/page";
+import { screen, fireEvent, act } from "@testing-library/react";
+import { renderWithDict } from "../helpers/renderWithDictionary";
+import HomeClient from "@/components/HomeClient";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import PQCPanel from "@/components/PQCPanel";
 import ShorPanel from "@/components/ShorPanel";
@@ -50,7 +51,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- QubitSlider → PQCPanel sync ---
 
   it("PQCPanel reflects qubit count changes from QubitSlider", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Default is 2000 qubits
     expect(screen.getByText("ML-KEM remains secure at 2,000 qubits")).toBeInTheDocument();
@@ -63,7 +64,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("QubitSlider broken count updates when slider changes", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // At default 2000 qubits: RSA-512 (1027) is broken → 1/5
     expect(screen.getByText(/1\/5 broken/)).toBeInTheDocument();
@@ -76,7 +77,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("RSA breakpoints update status when qubit count changes", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // At 100 qubits, nothing is broken
     const slider = screen.getByRole("slider");
@@ -89,7 +90,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("ML-KEM remains ALWAYS SAFE regardless of qubit count", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     expect(screen.getByText("ALWAYS SAFE")).toBeInTheDocument();
 
@@ -103,7 +104,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Speed control sync: ShorPanel → PQCPanel ---
 
   it("speed change in ShorPanel propagates to parent state", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Start simulation to reveal speed controls
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
@@ -122,7 +123,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Full simulation flow through Home page ---
 
   it("full simulation flow: input → run → steps → result", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Verify idle state
     expect(screen.getByText("Enter a number above to simulate Shor's algorithm")).toBeInTheDocument();
@@ -141,7 +142,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("preset button triggers simulation within full page context", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     fireEvent.click(screen.getByLabelText("Factor 77 (7×11)"));
     expect(screen.getByText("Running...")).toBeInTheDocument();
@@ -155,7 +156,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Simultaneous interactions across panels ---
 
   it("changing qubit slider while simulation runs does not break simulation", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Start simulation
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
@@ -179,7 +180,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Pause/resume within full page ---
 
   it("pause and resume work within full page context", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
@@ -197,7 +198,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("stop aborts simulation and shows no result in full page", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     fireEvent.click(screen.getByLabelText("Stop simulation"));
@@ -211,7 +212,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Speed changes during active simulation ---
 
   it("speed change during simulation updates speed button states", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
@@ -229,7 +230,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Error boundary isolation ---
 
   it("both panels render within their ErrorBoundary wrappers", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Both panels should be visible
     expect(screen.getByText("Classical RSA / ECC")).toBeInTheDocument();
@@ -239,7 +240,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Page structure ---
 
   it("renders header, slider, both panels, and footer", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // Header
     expect(screen.getByText("Why Quantum")).toBeInTheDocument();
@@ -261,14 +262,14 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("skip-to-content link exists for accessibility", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
     const skipLink = screen.getByText("Skip to main content");
     expect(skipLink).toBeInTheDocument();
     expect(skipLink).toHaveAttribute("href", "#main-content");
   });
 
   it("security status legend renders in header", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
     expect(screen.getByText("Vulnerable")).toBeInTheDocument();
     expect(screen.getByText("Quantum-Safe")).toBeInTheDocument();
   });
@@ -276,7 +277,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Cooldown after simulation completes ---
 
   it("cooldown state visible in full page context", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
@@ -301,7 +302,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Multiple simulation runs ---
 
   it("can run multiple simulations sequentially", async () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
 
     // First run
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
@@ -318,7 +319,7 @@ describe("Integration: Cross-panel state updates", () => {
   // --- Qubit slider range extremes ---
 
   it("handles minimum qubit count (100)", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
     const slider = screen.getByRole("slider");
     fireEvent.change(slider, { target: { value: "100" } });
 
@@ -327,7 +328,7 @@ describe("Integration: Cross-panel state updates", () => {
   });
 
   it("handles maximum qubit count (10000)", () => {
-    render(<Home />);
+    renderWithDict(<HomeClient />);
     const slider = screen.getByRole("slider");
     fireEvent.change(slider, { target: { value: "10000" } });
 
@@ -352,7 +353,7 @@ describe("Integration: Error boundary isolation", () => {
       throw new Error("ShorPanel crash");
     }
 
-    render(
+    renderWithDict(
       <div>
         <ErrorBoundary>
           <ThrowingPanel />
@@ -376,7 +377,7 @@ describe("Integration: Error boundary isolation", () => {
       throw new Error("PQCPanel crash");
     }
 
-    render(
+    renderWithDict(
       <div>
         <ErrorBoundary>
           <ShorPanel speedIndex={1} onSpeedChange={() => {}} />
@@ -402,7 +403,7 @@ describe("Integration: Error boundary isolation", () => {
       return <div>Recovered content</div>;
     }
 
-    render(
+    renderWithDict(
       <ErrorBoundary>
         <ConditionalThrow />
       </ErrorBoundary>
@@ -422,7 +423,7 @@ describe("Integration: QubitSlider keyboard navigation", () => {
   it("slider responds to keyboard arrow events", () => {
     const onChange = vi.fn();
 
-    render(<QubitSlider value={2000} onChange={onChange} />);
+    renderWithDict(<QubitSlider value={2000} onChange={onChange} />);
     const slider = screen.getByRole("slider");
 
     // Simulate keyboard change via the change event (jsdom limitation)
@@ -434,7 +435,7 @@ describe("Integration: QubitSlider keyboard navigation", () => {
   });
 
   it("slider has correct ARIA attributes for assistive technology", () => {
-    render(<QubitSlider value={3000} onChange={vi.fn()} />);
+    renderWithDict(<QubitSlider value={3000} onChange={vi.fn()} />);
     const slider = screen.getByRole("slider");
 
     expect(slider).toHaveAttribute("aria-valuemin", "100");
@@ -447,7 +448,7 @@ describe("Integration: QubitSlider keyboard navigation", () => {
 
 describe("Integration: PQCPanel dynamic qubit count updates", () => {
   it("status message updates when qubitCount prop changes", () => {
-    const { rerender } = render(<PQCPanel qubitCount={1000} />);
+    const { rerender } = renderWithDict(<PQCPanel qubitCount={1000} />);
     expect(screen.getByText("ML-KEM remains secure at 1,000 qubits")).toBeInTheDocument();
 
     rerender(<PQCPanel qubitCount={8000} />);
@@ -458,7 +459,7 @@ describe("Integration: PQCPanel dynamic qubit count updates", () => {
   });
 
   it("all ML-KEM algorithms remain SAFE at any qubit count", () => {
-    const { rerender } = render(<PQCPanel qubitCount={100} />);
+    const { rerender } = renderWithDict(<PQCPanel qubitCount={100} />);
     expect(screen.getAllByText("SAFE")).toHaveLength(3);
 
     rerender(<PQCPanel qubitCount={10000} />);
@@ -466,7 +467,7 @@ describe("Integration: PQCPanel dynamic qubit count updates", () => {
   });
 
   it("animationSpeedMs prop change re-renders LatticeVisualization", () => {
-    const { rerender } = render(<PQCPanel qubitCount={2000} animationSpeedMs={800} />);
+    const { rerender } = renderWithDict(<PQCPanel qubitCount={2000} animationSpeedMs={800} />);
     expect(screen.getByText("LATTICE PROBLEM (SVP)")).toBeInTheDocument();
 
     rerender(<PQCPanel qubitCount={2000} animationSpeedMs={200} />);

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
+import { renderWithDict } from "../helpers/renderWithDictionary";
 import ShorPanel from "@/components/ShorPanel";
 
 // Mock runShor to return deterministic results
@@ -42,31 +43,31 @@ describe("ShorPanel", () => {
   // --- Basic rendering ---
 
   it("renders the heading", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("Classical RSA / ECC")).toBeInTheDocument();
   });
 
   it("shows VULNERABLE badge", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("VULNERABLE")).toBeInTheDocument();
   });
 
   it("renders the number input with default value 15", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     const input = screen.getByRole("spinbutton");
     expect(input).toBeInTheDocument();
     expect(input).toHaveValue(15);
   });
 
   it("renders the Run button enabled for valid input", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     const button = screen.getByText("Run Shor's Algorithm");
     expect(button).toBeInTheDocument();
     expect(button).not.toBeDisabled();
   });
 
   it("renders all 6 preset buttons with correct aria labels", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("15")).toBeInTheDocument();
     expect(screen.getByText("21")).toBeInTheDocument();
     expect(screen.getByText("35")).toBeInTheDocument();
@@ -78,13 +79,13 @@ describe("ShorPanel", () => {
   });
 
   it("renders the ALGORITHM STEPS log area", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("ALGORITHM STEPS")).toBeInTheDocument();
     expect(screen.getByRole("log")).toBeInTheDocument();
   });
 
   it("shows prompt text when idle", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(
       screen.getByText("Enter a number above to simulate Shor's algorithm")
     ).toBeInTheDocument();
@@ -93,7 +94,7 @@ describe("ShorPanel", () => {
   // --- Input validation (button disable) ---
 
   it("disables Run button for number < 2", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.change(screen.getByRole("spinbutton"), {
       target: { value: "1" },
     });
@@ -101,7 +102,7 @@ describe("ShorPanel", () => {
   });
 
   it("disables Run button for number > 999", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.change(screen.getByRole("spinbutton"), {
       target: { value: "1000" },
     });
@@ -109,7 +110,7 @@ describe("ShorPanel", () => {
   });
 
   it("disables Run button for empty input", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.change(screen.getByRole("spinbutton"), {
       target: { value: "" },
     });
@@ -117,7 +118,7 @@ describe("ShorPanel", () => {
   });
 
   it("disables Run button for non-integer input", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.change(screen.getByRole("spinbutton"), {
       target: { value: "abc" },
     });
@@ -125,7 +126,7 @@ describe("ShorPanel", () => {
   });
 
   it("updates input value on change", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     const input = screen.getByRole("spinbutton");
     fireEvent.change(input, { target: { value: "42" } });
     expect(input).toHaveValue(42);
@@ -134,21 +135,21 @@ describe("ShorPanel", () => {
   // --- Simulation start ---
 
   it("clicking a preset updates input value and starts simulation", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByLabelText("Factor 77 (7×11)"));
     expect(screen.getByRole("spinbutton")).toHaveValue(77);
     expect(screen.getByText("Running...")).toBeInTheDocument();
   });
 
   it("clicking Run starts simulation", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByText("Running...")).toBeInTheDocument();
     expect(screen.getByRole("status")).toBeInTheDocument();
   });
 
   it("preset buttons have correct titles", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByLabelText("Factor 15 (3×5)")).toHaveAttribute(
       "title",
       "Composite number: 3×5"
@@ -160,49 +161,49 @@ describe("ShorPanel", () => {
   });
 
   it("renders quantum circuit visualization", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("QUANTUM CIRCUIT")).toBeInTheDocument();
   });
 
   // --- Accessibility ---
 
   it("renders section with proper aria-labelledby", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(
       screen.getByRole("region", { name: "Classical RSA / ECC" })
     ).toBeInTheDocument();
   });
 
   it("has accessible description for input range", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(
       screen.getByText("Enter a number between 2 and 999")
     ).toBeInTheDocument();
   });
 
   it("renders preset group with proper aria-label", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(
       screen.getByRole("group", { name: "Preset composite numbers to factor" })
     ).toBeInTheDocument();
   });
 
   it("description text mentions key quantum concepts", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(screen.getByText("quantum period-finding")).toBeInTheDocument();
     expect(screen.getByText("modular exponentiation")).toBeInTheDocument();
     expect(screen.getByText("QFT")).toBeInTheDocument();
   });
 
   it("input has correct min/max attributes", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     const input = screen.getByRole("spinbutton");
     expect(input).toHaveAttribute("min", "2");
     expect(input).toHaveAttribute("max", "999");
   });
 
   it("label for input section exists", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     expect(
       screen.getByText(/ENTER A NUMBER TO FACTOR/)
     ).toBeInTheDocument();
@@ -211,14 +212,14 @@ describe("ShorPanel", () => {
   // --- Animation Controls (lines 186-221) ---
 
   it("shows Pause and Stop buttons when simulation is running", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByLabelText("Pause simulation")).toBeInTheDocument();
     expect(screen.getByLabelText("Stop simulation")).toBeInTheDocument();
   });
 
   it("shows speed control buttons during simulation", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByRole("group", { name: "Animation speed" })).toBeInTheDocument();
     expect(screen.getByLabelText("Set speed to 0.5x")).toBeInTheDocument();
@@ -228,7 +229,7 @@ describe("ShorPanel", () => {
   });
 
   it("marks current speed as pressed", () => {
-    render(<ShorPanel speedIndex={2} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={2} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByLabelText("Set speed to 2x")).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByLabelText("Set speed to 1x")).toHaveAttribute("aria-pressed", "false");
@@ -236,7 +237,7 @@ describe("ShorPanel", () => {
 
   it("calls onSpeedChange when clicking a speed button", () => {
     const onSpeedChange = vi.fn();
-    render(<ShorPanel speedIndex={1} onSpeedChange={onSpeedChange} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={onSpeedChange} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     fireEvent.click(screen.getByLabelText("Set speed to 4x"));
     expect(onSpeedChange).toHaveBeenCalledWith(3);
@@ -245,7 +246,7 @@ describe("ShorPanel", () => {
   // --- Pause/Resume (lines 86-89) ---
 
   it("toggles Pause to Resume when clicked", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     fireEvent.click(screen.getByLabelText("Pause simulation"));
     expect(screen.getByLabelText("Resume simulation")).toBeInTheDocument();
@@ -253,7 +254,7 @@ describe("ShorPanel", () => {
   });
 
   it("toggles Resume back to Pause", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     fireEvent.click(screen.getByLabelText("Pause simulation"));
     fireEvent.click(screen.getByLabelText("Resume simulation"));
@@ -262,7 +263,7 @@ describe("ShorPanel", () => {
   });
 
   it("simulation waits while paused then continues after resume", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Advance past first step delay so step 1 resolves and step 2 begins
@@ -295,7 +296,7 @@ describe("ShorPanel", () => {
   // --- Stop (lines 91-94) ---
 
   it("stops the simulation and hides controls", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByText("Running...")).toBeInTheDocument();
 
@@ -311,7 +312,7 @@ describe("ShorPanel", () => {
   // --- Cooldown (lines 65-67, 81, 96) ---
 
   it("enters cooldown state after simulation completes", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Advance through just the simulation steps (3 × 800ms) without running cooldown timer
@@ -326,7 +327,7 @@ describe("ShorPanel", () => {
   });
 
   it("cooldown expires and re-enables Run button", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Complete simulation + cooldown
@@ -339,7 +340,7 @@ describe("ShorPanel", () => {
   // --- Result display (lines 276-325) ---
 
   it("displays successful factorization result", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     await completeSimulation();
@@ -349,7 +350,7 @@ describe("ShorPanel", () => {
   });
 
   it("displays academic references on success", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     await completeSimulation();
@@ -358,7 +359,7 @@ describe("ShorPanel", () => {
   });
 
   it("shows step labels after simulation", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     await completeSimulation();
@@ -382,7 +383,7 @@ describe("ShorPanel", () => {
       success: false,
     });
 
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     await completeSimulation();
@@ -405,7 +406,7 @@ describe("ShorPanel", () => {
       success: false,
     });
 
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Complete simulation + cooldown
@@ -418,7 +419,7 @@ describe("ShorPanel", () => {
   // --- handleRun guards ---
 
   it("does not run during cooldown", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Complete simulation but use partial advancement to stay in cooldown
@@ -437,33 +438,33 @@ describe("ShorPanel", () => {
   });
 
   it("input is disabled during simulation", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByRole("spinbutton")).toBeDisabled();
   });
 
   it("preset click while not running triggers simulate", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByLabelText("Factor 21 (3×7)"));
     expect(screen.getByRole("spinbutton")).toHaveValue(21);
     expect(mockedRunShor).toHaveBeenCalledWith(21);
   });
 
   it("shows running status text during active simulation", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByText("Quantum computer factoring...")).toBeInTheDocument();
   });
 
   it("shows paused status text when paused", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     fireEvent.click(screen.getByLabelText("Pause simulation"));
     expect(screen.getByText("Paused...")).toBeInTheDocument();
   });
 
   it("Run button shows correct aria-label when running", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     expect(screen.getByLabelText("Factoring in progress")).toBeInTheDocument();
   });
@@ -471,7 +472,7 @@ describe("ShorPanel", () => {
   // --- Error during cooldown (lines 91-93) ---
 
   it("sets validation error and does not start simulation when input is invalid during cooldown", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
     // Run simulation to completion to enter cooldown
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
@@ -513,7 +514,7 @@ describe("ShorPanel", () => {
   }
 
   it("handleRun sets validation error when invoked with empty input", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "" } });
 
@@ -526,7 +527,7 @@ describe("ShorPanel", () => {
   });
 
   it("handleRun sets validation error when invoked with out-of-range input", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "1" } });
 
@@ -538,7 +539,7 @@ describe("ShorPanel", () => {
   });
 
   it("handleRun clears error on subsequent valid input change", () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
     // Trigger error via handleRun with invalid input
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "" } });
@@ -554,7 +555,7 @@ describe("ShorPanel", () => {
   // --- Cleanup verification ---
 
   it("unmount during active simulation does not throw", async () => {
-    const { unmount } = render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    const { unmount } = renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 
     // Unmount while simulation is running — verifies cleanup (lines 37-43)
@@ -572,7 +573,7 @@ describe("ShorPanel", () => {
     const { __setReducedMotion, __resetReducedMotion } = await import("framer-motion") as any;
     __setReducedMotion(true);
 
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     await completeSimulation();
 
@@ -590,7 +591,7 @@ describe("ShorPanel", () => {
       success: false,
     });
 
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
     await completeSimulation();
 
@@ -599,7 +600,7 @@ describe("ShorPanel", () => {
   });
 
   it("stop during cooldown resets to idle state", async () => {
-    render(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
+    renderWithDict(<ShorPanel speedIndex={1} onSpeedChange={() => {}} />);
 
     fireEvent.click(screen.getByText("Run Shor's Algorithm"));
 

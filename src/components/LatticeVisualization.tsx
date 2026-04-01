@@ -3,6 +3,8 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { memo, useMemo, useState, useEffect, useRef } from "react";
 import { ANIMATION, COLORS, LATTICE_GRID_SIZE, LATTICE_LAYOUT } from "@/lib/constants";
+import { useDictionary } from "./DictionaryProvider";
+import { interpolate } from "@/lib/i18n";
 
 interface LatticeVisualizationProps {
   qubitCount: number;
@@ -11,6 +13,8 @@ interface LatticeVisualizationProps {
 
 export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs = ANIMATION.speeds[ANIMATION.defaultSpeedIndex].value }: LatticeVisualizationProps) {
   const shouldReduceMotion = useReducedMotion();
+  const { dict } = useDictionary();
+  const t = dict.lattice;
   const gridSize = LATTICE_GRID_SIZE;
 
   const points = useMemo(() => {
@@ -32,8 +36,6 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
   const searchAttempts = useMemo(() => {
     const attempts: { x: number; y: number }[] = [];
     const seed = qubitCount;
-    // Scale search attempts by qubit count: dividing by qubitScaleDivisor maps typical qubit ranges (1000-4096)
-    // to 0-~8 additional attempts, capped at maxSearchAttempts to keep the visualization readable.
     for (let k = 0; k < Math.min(LATTICE_LAYOUT.maxSearchAttempts, Math.floor(qubitCount / LATTICE_LAYOUT.qubitScaleDivisor) + LATTICE_LAYOUT.minSearchAttempts); k++) {
       const idx = ((seed * (k + 1) * 7) % points.length);
       if (!points[idx].isTarget) {
@@ -43,7 +45,6 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
     return attempts;
   }, [qubitCount, points]);
 
-  // Animate search attempts one at a time
   const [visibleAttempts, setVisibleAttempts] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -71,7 +72,6 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
     };
   }, [searchAttempts, animationSpeedMs]);
 
-  // Memoize static grid lines
   const gridLines = useMemo(() => {
     const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
     for (let i = 0; i < gridSize; i++) {
@@ -92,13 +92,12 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
   return (
     <div className="relative w-full h-36 md:h-48 rounded-lg bg-surface-deep border border-panel-border p-4 overflow-hidden">
       <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
-        LATTICE PROBLEM (SVP)
+        {t.label}
       </div>
 
       <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-labelledby="lattice-viz-title lattice-viz-desc">
-        <title id="lattice-viz-title">{`Lattice visualization showing the Shortest Vector Problem`}</title>
-        <desc id="lattice-viz-desc">{`A grid of ${gridSize}×${gridSize} points with the closest vector highlighted. ${searchAttempts.length} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.`}</desc>
-        {/* Grid lines */}
+        <title id="lattice-viz-title">{t.title}</title>
+        <desc id="lattice-viz-desc">{interpolate(t.desc, { size: gridSize, attempts: searchAttempts.length })}</desc>
         {gridLines.map((line, idx) => (
           <line
             key={idx}
@@ -111,7 +110,6 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
           />
         ))}
 
-        {/* Lattice points */}
         {points.map((pt, idx) => (
           <motion.circle
             key={idx}
@@ -131,7 +129,6 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
           />
         ))}
 
-        {/* Target label */}
         {points
           .filter((p) => p.isTarget)
           .map((pt, i) => (
@@ -143,11 +140,10 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
               fontSize="8"
               fontFamily="monospace"
             >
-              closest vector
+              {t.closestVector}
             </text>
           ))}
 
-        {/* Quantum search attempts — revealed sequentially */}
         {searchAttempts.slice(0, visibleAttempts).map((pt, idx) => (
           <g key={`search-${idx}`}>
             <motion.circle
@@ -178,9 +174,8 @@ export default memo(function LatticeVisualization({ qubitCount, animationSpeedMs
           </g>
         ))}
 
-        {/* Legend */}
         <text x="380" y="130" fill="#555" fontSize="8" fontFamily="monospace">
-          Grover: √n speedup only
+          {t.groverSpeedup}
         </text>
       </svg>
     </div>

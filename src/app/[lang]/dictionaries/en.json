@@ -1,0 +1,201 @@
+{
+  "metadata": {
+    "title": "Why Quantum Breaks RSA",
+    "titleTemplate": "%s | Why Quantum Breaks RSA",
+    "description": "Interactive dashboard comparing classical RSA vulnerability to Shor's algorithm vs post-quantum cryptography resilience",
+    "ogDescription": "Interactive dashboard showing how quantum computers break RSA encryption and why post-quantum cryptography is the solution"
+  },
+  "header": {
+    "titleWhy": "Why Quantum ",
+    "titleBreaks": "Breaks",
+    "titleRSA": " RSA",
+    "subtitle": "Interactive comparison: Classical cryptography vs Post-Quantum security",
+    "vulnerable": "Vulnerable",
+    "quantumSafe": "Quantum-Safe",
+    "skipToContent": "Skip to main content"
+  },
+  "footer": {
+    "disclaimer": "Educational simulation — qubit estimates are approximate based on current research",
+    "nistRef": "NIST PQC Standard: FIPS 203 (ML-KEM) · August 2024"
+  },
+  "localeSwitcher": {
+    "en": "EN",
+    "vi": "VI",
+    "label": "Language"
+  },
+  "qubitSlider": {
+    "heading": "Qubit Count",
+    "description": "Drag to simulate quantum computer scaling",
+    "logicalQubits": "logical qubits",
+    "qubitCountLabel": "Qubit count: {value}",
+    "qubitCountValueText": "{value} logical qubits",
+    "rsaKeyVulnerability": "RSA KEY VULNERABILITY ({broken}/{total} broken)",
+    "qubits": "~{value} qubits",
+    "statusBroken": "BROKEN",
+    "statusSafe": "SAFE",
+    "mlkemAllLevels": "ML-KEM (all levels)",
+    "alwaysSafe": "ALWAYS SAFE",
+    "mlkemExplanation": "No qubit threshold exists — lattice problems have no known efficient quantum solution"
+  },
+  "shorPanel": {
+    "heading": "Classical RSA / ECC",
+    "vulnerable": "VULNERABLE",
+    "descPart1": "Shor's algorithm uses ",
+    "quantumPeriodFinding": "quantum period-finding",
+    "descPart2": " to factor large numbers exponentially faster than any classical algorithm. The key step is ",
+    "modularExponentiation": "modular exponentiation",
+    "descPart3": " in superposition, followed by the ",
+    "qft": "QFT",
+    "descPart4": ". This breaks RSA, whose security relies on the difficulty of factoring.",
+    "inputLabel": "ENTER A NUMBER TO FACTOR (Shor's Simulation)",
+    "inputRange": "Enter a number between 2 and 999",
+    "runButton": "Run Shor's Algorithm",
+    "running": "Running...",
+    "wait": "Wait...",
+    "runAriaLabel": "Run Shor's Algorithm on {n}",
+    "factoringAriaLabel": "Factoring in progress",
+    "waitAriaLabel": "Please wait before trying again",
+    "pause": "Pause",
+    "resume": "Resume",
+    "pauseAriaLabel": "Pause simulation",
+    "resumeAriaLabel": "Resume simulation",
+    "stop": "Stop",
+    "stopAriaLabel": "Stop simulation",
+    "speed": "Speed:",
+    "speedAriaLabel": "Animation speed",
+    "setSpeedAriaLabel": "Set speed to {label}",
+    "algorithmSteps": "ALGORITHM STEPS",
+    "algorithmStepsAriaLabel": "Algorithm steps",
+    "idlePrompt": "Enter a number above to simulate Shor's algorithm",
+    "factoring": "Quantum computer factoring...",
+    "paused": "Paused...",
+    "resultLine": "{n} = {f1} × {f2}",
+    "encryptionBroken": "RSA key factored by quantum computer — encryption broken",
+    "shorRef": "Ref: Shor (1994) · Beauregard (2003) · Gidney & Ekerå (2021)",
+    "couldNotFactor": "Could not factor {n} in this run",
+    "probabilistic": "Shor's algorithm is probabilistic — the chosen random values didn't yield factors this time. Try again!",
+    "retryButton": "Retry with new random 'a'",
+    "presetAriaLabel": "Preset composite numbers to factor",
+    "compositeNumber": "Composite number: {factors}",
+    "factorAriaLabel": "Factor {n} ({factors})",
+    "validation": {
+      "empty": "Please enter a number.",
+      "invalid": "Please enter a valid integer.",
+      "tooSmall": "Number must be at least 2.",
+      "tooLarge": "Number must be 999 or less."
+    }
+  },
+  "pqcPanel": {
+    "heading": "Post-Quantum (ML-KEM)",
+    "secure": "SECURE",
+    "descPart1": "ML-KEM (formerly CRYSTALS-Kyber), standardized in ",
+    "nistFips203": "NIST FIPS 203",
+    "descPart2": ", is based on the ",
+    "mlwe": "MLWE",
+    "descPart3": " lattice problem. Even quantum computers with Grover's algorithm only achieve a √n speedup — not enough to break it.",
+    "whyQuantumCantBreak": "WHY QUANTUM CAN'T BREAK LATTICE",
+    "groverTitle": "Grover's Algorithm: Only √n speedup",
+    "groverDesc": "Unlike Shor's exponential speedup for factoring, Grover's search only provides a quadratic advantage. 2^128 → 2^64 operations.",
+    "noKnownTitle": "No known quantum algorithm for ",
+    "svp": "SVP",
+    "noKnownDesc": "The Shortest Vector Problem in high-dimensional lattices has no efficient quantum algorithm — unlike integer factoring.",
+    "noiseTitle": "Noise hides the secret",
+    "lwe": "LWE",
+    "noiseDesc": " adds Gaussian noise to lattice computations. Even with quantum superposition, the noise prevents extracting the secret key.",
+    "groverComparison": "GROVER'S SPEEDUP COMPARISON",
+    "classicalBruteForce": "Classical brute force",
+    "classicalBarAriaLabel": "Classical brute force: full bar representing 2 to the power of 128 operations",
+    "groverQuantumSearch": "Grover's quantum search",
+    "groverBarAriaLabel": "Grover quantum search: half bar representing 2 to the power of 64 operations",
+    "infeasible": "Still 1.8×10^19 operations — completely infeasible even for quantum computers",
+    "mlkemLevels": "ML-KEM SECURITY LEVELS",
+    "level": "Level",
+    "safe": "SAFE",
+    "remainsSecure": "ML-KEM remains secure at {qubits} qubits",
+    "noQuantumAlgo": "No quantum algorithm can efficiently solve the lattice problem",
+    "pqcRef": "Ref: NIST FIPS 203 (2024) · Grover (1996) · Regev (2005)"
+  },
+  "quantumCircuit": {
+    "label": "QUANTUM CIRCUIT",
+    "title": "Quantum circuit diagram with {qubits} qubit lines and {gates} gates",
+    "desc": "Hadamard, Oracle, Inverse QFT, and Measure",
+    "executing": ". Currently executing step {step} of {total}"
+  },
+  "lattice": {
+    "label": "LATTICE PROBLEM (SVP)",
+    "title": "Lattice visualization showing the Shortest Vector Problem",
+    "desc": "A grid of {size}×{size} points with the closest vector highlighted. {attempts} quantum search attempts shown, all missing the target — demonstrating that Grover's algorithm only provides square root speedup.",
+    "closestVector": "closest vector",
+    "groverSpeedup": "Grover: √n speedup only"
+  },
+  "quiz": {
+    "testYourKnowledge": "Test Your Knowledge",
+    "questionOf": "Question {current} of {total}",
+    "selectAnswer": "Select your answer for question {n}",
+    "checkAnswer": "Check Answer",
+    "nextQuestion": "Next Question",
+    "seeResults": "See Results",
+    "correct": "Correct!",
+    "incorrect": "Incorrect",
+    "quizComplete": "Quiz Complete",
+    "scoreAriaLabel": "Score: {score} out of {total}",
+    "tryAgain": "Try Again",
+    "excellentMessage": "Excellent! You have strong knowledge of quantum cryptography.",
+    "goodMessage": "Good effort! Review the topics you missed to strengthen your understanding.",
+    "keepLearningMessage": "Keep learning! The visualizations above can help build your understanding.",
+    "answerReview": "Answer review",
+    "quizAriaLabel": "Quantum cryptography quiz",
+    "resultsAriaLabel": "Quiz results",
+    "topicLabels": {
+      "rsa": "RSA",
+      "shor": "Shor's Algorithm",
+      "pqc": "Post-Quantum"
+    },
+    "questions": [
+      {
+        "question": "What mathematical problem does RSA encryption rely on for its security?",
+        "options": ["Discrete logarithm problem", "Integer factorization of large semiprimes", "Elliptic curve point multiplication", "Shortest vector problem in lattices"],
+        "explanation": "RSA security depends on the difficulty of factoring the product of two large prime numbers. Classical computers cannot efficiently factor large semiprimes, which is what makes RSA secure today."
+      },
+      {
+        "question": "What does Shor's algorithm efficiently solve on a quantum computer?",
+        "options": ["Finding shortest paths in graphs", "Searching unsorted databases", "Integer factorization and discrete logarithms", "Solving NP-complete problems"],
+        "explanation": "Shor's algorithm can factor integers and compute discrete logarithms in polynomial time on a quantum computer, breaking RSA and many other public-key cryptosystems."
+      },
+      {
+        "question": "Approximately how many logical qubits are estimated to break RSA-2048?",
+        "options": ["About 100 qubits", "About 1,000 qubits", "About 4,000 qubits", "About 1,000,000 qubits"],
+        "explanation": "Current research estimates that roughly 4,000 error-corrected logical qubits would be needed to factor a 2048-bit RSA key using Shor's algorithm, though physical qubit requirements are much higher due to error correction overhead."
+      },
+      {
+        "question": "What is ML-KEM (formerly CRYSTALS-Kyber)?",
+        "options": ["A quantum computing programming language", "A NIST-standardized post-quantum key encapsulation mechanism", "A classical symmetric encryption algorithm", "A quantum error correction code"],
+        "explanation": "ML-KEM (Module-Lattice-Based Key Encapsulation Mechanism), standardized as FIPS 203 in August 2024, is a post-quantum key encapsulation mechanism based on the hardness of lattice problems."
+      },
+      {
+        "question": "Why are lattice-based cryptographic schemes considered quantum-resistant?",
+        "options": ["They use quantum entanglement for key exchange", "No known quantum algorithm can efficiently solve lattice problems like SVP", "They require more qubits than will ever be built", "They are based on one-time pads which are information-theoretically secure"],
+        "explanation": "Lattice-based schemes rely on problems like the Shortest Vector Problem (SVP) and Learning With Errors (LWE). No known quantum algorithm, including Shor's, can efficiently solve these problems."
+      },
+      {
+        "question": "What is a \"harvest now, decrypt later\" attack?",
+        "options": ["Stealing encryption keys from quantum computers", "Capturing encrypted data today to decrypt it once quantum computers are available", "Using quantum computers to break real-time communications", "A brute-force attack that runs overnight"],
+        "explanation": "Adversaries can record encrypted traffic today and store it until sufficiently powerful quantum computers exist to decrypt it. This \"harvest now, decrypt later\" threat is why migrating to post-quantum cryptography is urgent even before large-scale quantum computers are built."
+      },
+      {
+        "question": "Which quantum phenomenon does Shor's algorithm exploit to find the period of a function?",
+        "options": ["Quantum tunneling", "Quantum superposition and interference via the Quantum Fourier Transform", "Quantum entanglement swapping", "Quantum decoherence"],
+        "explanation": "Shor's algorithm uses superposition to evaluate a function at many inputs simultaneously, then applies the Quantum Fourier Transform (QFT) to extract the period through constructive and destructive interference."
+      },
+      {
+        "question": "What NIST process led to the standardization of post-quantum cryptographic algorithms?",
+        "options": ["The Quantum Computing Initiative of 2015", "The Post-Quantum Cryptography Standardization Project started in 2016", "The Advanced Encryption Standard competition", "The SHA-3 hash function competition"],
+        "explanation": "NIST began its Post-Quantum Cryptography Standardization Project in 2016, evaluating submissions over multiple rounds. The first standards (FIPS 203, 204, 205) were published in August 2024."
+      }
+    ]
+  },
+  "errorBoundary": {
+    "message": "Something went wrong rendering this section.",
+    "retry": "Try again"
+  }
+}

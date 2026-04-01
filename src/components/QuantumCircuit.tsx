@@ -3,15 +3,19 @@
 import { memo, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { COLORS, CIRCUIT_LAYOUT, QUANTUM_GATES, QUBIT_COUNT } from "@/lib/constants";
+import { useDictionary } from "./DictionaryProvider";
+import { interpolate } from "@/lib/i18n";
 
 interface QuantumCircuitProps {
   active: boolean;
-  step: number; // 0-3 for animation stages
+  step: number;
 }
 
 function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
   const shouldReduceMotion = useReducedMotion();
-  // Memoize static qubit line positions
+  const { dict } = useDictionary();
+  const t = dict.quantumCircuit;
+
   const qubitLines = useMemo(
     () => Array.from({ length: QUBIT_COUNT }, (_, i) => CIRCUIT_LAYOUT.qubitLineYStart + i * CIRCUIT_LAYOUT.qubitLineSpacing),
     []
@@ -20,13 +24,12 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
   return (
     <div className="relative w-full h-36 md:h-48 rounded-lg bg-surface-deep border border-panel-border p-4 overflow-hidden">
       <div className="absolute top-2 left-3 text-[10px] text-gray-500 font-mono" aria-hidden="true">
-        QUANTUM CIRCUIT
+        {t.label}
       </div>
 
       <svg viewBox="0 0 500 140" preserveAspectRatio="xMidYMid meet" className="w-full h-full" role="img" aria-labelledby="quantum-circuit-title quantum-circuit-desc">
-        <title id="quantum-circuit-title">{`Quantum circuit diagram with ${QUBIT_COUNT} qubit lines and ${QUANTUM_GATES.length} gates`}</title>
-        <desc id="quantum-circuit-desc">{`Hadamard, Oracle, Inverse QFT, and Measure${active ? `. Currently executing step ${step + 1} of ${QUANTUM_GATES.length}` : ""}`}</desc>
-        {/* Qubit lines */}
+        <title id="quantum-circuit-title">{interpolate(t.title, { qubits: QUBIT_COUNT, gates: QUANTUM_GATES.length })}</title>
+        <desc id="quantum-circuit-desc">{`${t.desc}${active ? interpolate(t.executing, { step: step + 1, total: QUANTUM_GATES.length }) : ""}`}</desc>
         {qubitLines.map((y, i) => (
           <g key={i}>
             <line x1={CIRCUIT_LAYOUT.qubitLineX1} y1={y} x2={CIRCUIT_LAYOUT.qubitLineX2} y2={y} stroke={COLORS.borderDark} strokeWidth="1" />
@@ -36,7 +39,6 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
           </g>
         ))}
 
-        {/* Gates */}
         {QUANTUM_GATES.map((gate, gIdx) => {
           const x = CIRCUIT_LAYOUT.gateXStart + gIdx * CIRCUIT_LAYOUT.gateSpacing;
           const isActive = active && step >= gIdx;
@@ -85,7 +87,6 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
                   </text>
                 </g>
               ))}
-              {/* Gate label */}
               <text
                 x={x}
                 y={CIRCUIT_LAYOUT.qubitLineYStart + QUBIT_COUNT * CIRCUIT_LAYOUT.qubitLineSpacing + CIRCUIT_LAYOUT.gateDescYPadding}
@@ -100,7 +101,6 @@ function QuantumCircuitInner({ active, step }: QuantumCircuitProps) {
           );
         })}
 
-        {/* Flowing qubit animation — Framer Motion only (no raw SVG animate) */}
         {active &&
           qubitLines.map((y, i) => {
             const prevX = step > 0

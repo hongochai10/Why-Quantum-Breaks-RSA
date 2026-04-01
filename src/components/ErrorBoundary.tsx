@@ -5,6 +5,8 @@ import { Component, type ReactNode, type ErrorInfo } from "react";
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  errorMessage?: string;
+  retryLabel?: string;
 }
 
 interface State {
@@ -34,13 +36,13 @@ export default class ErrorBoundary extends Component<Props, State> {
             role="alert"
           >
             <p className="text-sm text-gray-400">
-              Something went wrong rendering this section.
+              {this.props.errorMessage ?? "Something went wrong rendering this section."}
             </p>
             <button
               onClick={() => this.setState({ hasError: false })}
               className="mt-3 px-3 py-1 text-xs rounded bg-border-dark hover:bg-border-hover text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-purple"
             >
-              Try again
+              {this.props.retryLabel ?? "Try again"}
             </button>
           </div>
         )
