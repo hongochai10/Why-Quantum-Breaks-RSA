@@ -163,7 +163,7 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
             onClick={handleRun}
             disabled={isButtonDisabled}
             aria-label={isRunning ? "Factoring in progress" : cooldown ? "Please wait before trying again" : `Run Shor's Algorithm on ${inputN}`}
-            className="px-3 md:px-4 py-2 rounded bg-accent-red hover:bg-accent-red-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-red focus:ring-offset-2 focus:ring-offset-surface-deep"
+            className="px-3 md:px-4 py-2 rounded bg-accent-red hover:bg-accent-red-hover disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-accent-red focus:ring-offset-2 focus:ring-offset-surface-deep"
           >
             {isRunning ? "Running..." : cooldown ? "Wait..." : "Run Shor's Algorithm"}
           </button>
@@ -329,7 +329,7 @@ export default function ShorPanel({ speedIndex, onSpeedChange }: ShorPanelProps)
               <button
                 onClick={() => simulate(result.n)}
                 disabled={isRunning || cooldown}
-                className="mt-2 px-3 py-1 text-xs rounded bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-1 focus:ring-offset-panel-bg"
+                className="mt-2 px-3 py-1 text-xs rounded bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 transition-colors disabled:bg-gray-700/50 disabled:text-gray-500 disabled:border-gray-600/30 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-1 focus:ring-offset-panel-bg"
               >
                 Retry with new random &apos;a&apos;
               </button>
